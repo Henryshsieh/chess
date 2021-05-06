@@ -9,7 +9,6 @@ public:
 private:
 	Player* players[2];
 	int current_player;
-	Board board;
 	Viewer viewer;
 
 };

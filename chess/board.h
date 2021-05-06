@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-
+#include <iomanip>
 #define BOARDLEN 8
 using namespace std;
 
@@ -12,33 +12,46 @@ struct Position {
 class Board
 {
 public:
-	//declare chess board.
-	int board[BOARDLEN][BOARDLEN] = { 0 };
-
-	Position startPos;
-	Position assignPos;
-
 	//piece codename.
-	enum piece
+	enum mynum
 	{
 		empty = 0,
-
 		//white side.
-		WKing = 1,
-		WQueen = 2,
-		WRook = 3,
-		WBishop = 4,
-		WKnight = 5,
-		WPawn = 6,
-
-		//black side.
-		BKing = -1,
-		BQueen = -2,
-		BRook = -3,
-		BBishop = -4,
-		BKnight = -5,
-		BPawn = -6,
+		King = 1,
+		Queen = 2,
+		Rook = 3,
+		Bishop = 4,
+		Knight = 5,
+		Pawn = 6,
 	};
+
+	class piece
+	{
+	public:
+		piece() :pieceId(empty) {}
+		piece(int id, int c) :pieceId(id), camp(c) {}
+		void move()
+		{
+			switch (pieceId)
+			{
+			default:
+				break;
+			}
+		}
+		friend ostream& operator<<(ostream& str, piece p)
+		{
+			str << p.pieceId;
+			return str;
+		}
+	int pieceId;
+	int camp;
+
+	};
+	//declare chess board.
+	piece board[BOARDLEN][BOARDLEN];
+	Position startPos;
+	Position assignPos;
+	
 
 	void moveKing(Position, Position);
 	void moveQueen(Position, Position);
@@ -46,8 +59,7 @@ public:
 	void moveBishop(Position, Position);
 	void moveKnight(Position, Position);
 	void movePawn(Position, Position);
-
-
+	void print();
 	
 
 	Board();
@@ -58,28 +70,35 @@ private:
 
 Board::Board()
 {
-	board[0][0] = BRook;
-	board[0][1] = BKnight;
-	board[0][2] = BBishop;
-	board[0][3] = BQueen;
-	board[0][4] = BKing;
-	board[0][5] = BBishop;
-	board[0][6] = BKnight;
-	board[0][7] = BRook;
+	for (int i = 0; i < BOARDLEN; i++)
+	{
+		for (int j = 0; j < BOARDLEN; j++)
+		{
+			board[i][j] = piece(empty, 0);
+		}
+	}
+	board[0][0] = piece(Rook,-1);
+	board[0][1] = piece(Knight,-1);
+	board[0][2] = piece(Bishop,-1);
+	board[0][3] = piece(Queen,-1);
+	board[0][4] = piece(King,-1);
+	board[0][5] = piece(Bishop,-1);
+	board[0][6] = piece(Knight,-1);
+	board[0][7] = piece(Rook,-1);
 
-	board[7][0] = WRook;
-	board[7][1] = WKnight;
-	board[7][2] = WBishop;
-	board[7][3] = WQueen;
-	board[7][4] = WKing;
-	board[7][5] = WBishop;
-	board[7][6] = WKnight;
-	board[7][7] = WRook;
+	board[7][0] = piece(Rook,1);
+	board[7][1] = piece(Knight,1);
+	board[7][2] = piece(Bishop,1);
+	board[7][3] = piece(Queen,1);
+	board[7][4] = piece(King,1);
+	board[7][5] = piece(Bishop,1);
+	board[7][6] = piece(Knight,1);
+	board[7][7] = piece(Rook,1);
 
 	for (int i = 0; i < BOARDLEN; i++)
 	{
-		board[1][i] = BPawn;
-		board[6][i] = WPawn;
+		board[1][i] = piece(Pawn, -1);
+		board[6][i] = piece(Pawn, 1);
 	}
 }
 
@@ -210,4 +229,17 @@ void Board::movePawn(Position startPos, Position assignPos)
 
 	//還想不到怎麼搞第一步2格
 	//跟要判斷黑白兩方
+}
+
+
+void Board::print()
+{
+	for (int i = 0 ; i < BOARDLEN ; i++)
+	{
+		for (int j = 0 ; j < BOARDLEN ; j++)
+		{
+			cout << setw(2) << board[i][j];
+		}
+		cout << endl;
+	}
 }
