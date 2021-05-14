@@ -43,15 +43,15 @@ public:
 			str << p.pieceId;
 			return str;
 		}
-	int pieceId;
-	int camp;
+		int pieceId;
+		int camp;
 
 	};
 	//declare chess board.
 	piece board[BOARDLEN][BOARDLEN];
 	Position startPos;
 	Position assignPos;
-	
+
 
 	void moveKing(Position, Position);
 	void moveQueen(Position, Position);
@@ -60,7 +60,7 @@ public:
 	void moveKnight(Position, Position);
 	void movePawn(Position, Position);
 	void print();
-	
+
 
 	Board();
 
@@ -77,23 +77,23 @@ Board::Board()
 			board[i][j] = piece(empty, 0);
 		}
 	}
-	board[0][0] = piece(Rook,-1);
-	board[0][1] = piece(Knight,-1);
-	board[0][2] = piece(Bishop,-1);
-	board[0][3] = piece(Queen,-1);
-	board[0][4] = piece(King,-1);
-	board[0][5] = piece(Bishop,-1);
-	board[0][6] = piece(Knight,-1);
-	board[0][7] = piece(Rook,-1);
+	board[0][0] = piece(Rook, -1);
+	board[0][1] = piece(Knight, -1);
+	board[0][2] = piece(Bishop, -1);
+	board[0][3] = piece(Queen, -1);
+	board[0][4] = piece(King, -1);
+	board[0][5] = piece(Bishop, -1);
+	board[0][6] = piece(Knight, -1);
+	board[0][7] = piece(Rook, -1);
 
-	board[7][0] = piece(Rook,1);
-	board[7][1] = piece(Knight,1);
-	board[7][2] = piece(Bishop,1);
-	board[7][3] = piece(Queen,1);
-	board[7][4] = piece(King,1);
-	board[7][5] = piece(Bishop,1);
-	board[7][6] = piece(Knight,1);
-	board[7][7] = piece(Rook,1);
+	board[7][0] = piece(Rook, 1);
+	board[7][1] = piece(Knight, 1);
+	board[7][2] = piece(Bishop, 1);
+	board[7][3] = piece(Queen, 1);
+	board[7][4] = piece(King, 1);
+	board[7][5] = piece(Bishop, 1);
+	board[7][6] = piece(Knight, 1);
+	board[7][7] = piece(Rook, 1);
 
 	for (int i = 0; i < BOARDLEN; i++)
 	{
@@ -125,7 +125,7 @@ void Board::moveQueen(Position startPos, Position assignPos)
 	int thatX = assignPos.x;
 	int thatY = assignPos.y;
 
-	
+
 	if (queenX != thatX || queenY != thatY) //不是同位置
 	{
 		//同X
@@ -150,7 +150,7 @@ void Board::moveQueen(Position startPos, Position assignPos)
 					return;
 				}
 			}
-				
+
 		}
 
 	}
@@ -180,7 +180,7 @@ void Board::moveRook(Position startPos, Position assignPos)
 				return;
 			}
 		}
-			
+
 	}
 }
 
@@ -199,7 +199,7 @@ void Board::moveBishop(Position startPos, Position assignPos)
 	{
 		return;
 	}
-		
+
 }
 
 void Board::moveKnight(Position startPos, Position assignPos)
@@ -234,9 +234,9 @@ void Board::movePawn(Position startPos, Position assignPos)
 
 void Board::print()
 {
-	for (int i = 0 ; i < BOARDLEN ; i++)
+	for (int i = 0; i < BOARDLEN; i++)
 	{
-		for (int j = 0 ; j < BOARDLEN ; j++)
+		for (int j = 0; j < BOARDLEN; j++)
 		{
 			cout << setw(2) << board[i][j];
 		}
