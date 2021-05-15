@@ -30,10 +30,19 @@ public:
 	public:
 		piece() :pieceId(empty) {}
 		piece(int id, int c) :pieceId(id), camp(c) {}
-		void move()
+		void move(Position startPos, Position assignPos)
 		{
 			switch (pieceId)
 			{
+			case empty:
+				moveKing(startPos, assignPos);
+			break;
+			case King:
+			case Queen:
+			case Rook:
+			case Bishop:
+			case Knight:
+			case Pawn:
 			default:
 				break;
 			}
@@ -48,18 +57,18 @@ public:
 
 	};
 	//declare chess board.
-	piece board[BOARDLEN][BOARDLEN];
+	static piece board[BOARDLEN][BOARDLEN];
 	Position startPos;
 	Position assignPos;
 	
 
-	void moveKing(Position, Position);
-	void moveQueen(Position, Position);
-	void moveRook(Position, Position);
-	void moveBishop(Position, Position);
-	void moveKnight(Position, Position);
-	void movePawn(Position, Position);
-	void print();
+	friend void moveKing(Position, Position);
+	friend void moveQueen(Position, Position);
+	friend void moveRook(Position, Position);
+	friend void moveBishop(Position, Position);
+	friend void moveKnight(Position, Position);
+	friend void movePawn(Position, Position);
+	friend void print();
 	
 
 	Board();
@@ -104,7 +113,7 @@ Board::Board()
 
 
 
-void Board::moveKing(Position startPos, Position assignPos)
+void moveKing(Position startPos, Position assignPos)
 {
 	//四周八格
 	if (abs(assignPos.x - startPos.x) == 1)
