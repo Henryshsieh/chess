@@ -1,89 +1,62 @@
 #pragma once
+#include <conio.h>
 #include <iostream>
 #include <iomanip>
 #define BOARDLEN 8
 using namespace std;
 
 struct Position {
+public:
 	int x; // X, y Coordinate.
 	int y;
 };
 
+enum mynum
+{
+	null = 0,
+	King = 1,
+	Queen = 2,
+	Rook = 3,
+	Bishop = 4,
+	Knight = 5,
+	Pawn = 6,
+};
+
+class piece
+{
+public:
+	piece() :pieceId(null), camp(0), moved(0) {}
+	piece(int id, int c) :pieceId(id), camp(c), moved(0) {}
+	friend ostream& operator<<(ostream& str, piece p)
+	{
+		str << p.pieceId;
+		return str;
+	}
+	int pieceId;
+	int camp;
+	bool moved = 0;
+
+};
+
+
 class Board
 {
 public:
-	//piece codename.
-	enum mynum
-	{
-		empty = 0,
-		//white side.
-		King = 1,
-		Queen = 2,
-		Rook = 3,
-		Bishop = 4,
-		Knight = 5,
-		Pawn = 6,
-	};
-
-	class piece
-	{
-	public:
-		piece() :pieceId(empty) {}
-		piece(int id, int c) :pieceId(id), camp(c) {}
-		void move(Position startPos, Position assignPos)
-		{
-			switch (pieceId)
-			{
-			case empty:
-				moveKing(startPos, assignPos);
-			break;
-			case King:
-			case Queen:
-			case Rook:
-			case Bishop:
-			case Knight:
-			case Pawn:
-			default:
-				break;
-			}
-		}
-		friend ostream& operator<<(ostream& str, piece p)
-		{
-			str << p.pieceId;
-			return str;
-		}
-		int pieceId;
-		int camp;
-
-	};
 	//declare chess board.
-	static piece board[BOARDLEN][BOARDLEN];
-	Position startPos;
-	Position assignPos;
-
-
-	void moveKing(Position, Position);
-	void moveQueen(Position, Position);
-	void moveRook(Position, Position);
-	void moveBishop(Position, Position);
-	void moveKnight(Position, Position);
-	void movePawn(Position, Position);
+	piece board[BOARDLEN][BOARDLEN];
 	void print();
-
-
+	void print(Position);
 	Board();
-
 protected:
 private:
 };
-
 Board::Board()
 {
 	for (int i = 0; i < BOARDLEN; i++)
 	{
 		for (int j = 0; j < BOARDLEN; j++)
 		{
-			board[i][j] = piece(empty, 0);
+			board[i][j] = piece(null, 0);
 		}
 	}
 	board[0][0] = piece(Rook, -1);
@@ -112,135 +85,6 @@ Board::Board()
 }
 
 
-
-void moveKing(Position startPos, Position assignPos)
-{
-	//四周八格
-	if (abs(assignPos.x - startPos.x) == 1)
-	{
-		if (abs(assignPos.y - startPos.y) == 1)
-		{
-			board[assignPos.x][assignPos.y] = board[startPos.x][startPos.y];
-		}
-		else return;
-	}
-	else return;
-}
-
-void Board::moveQueen(Position startPos, Position assignPos)
-{
-	int queenX = startPos.x;
-	int queenY = startPos.y;
-	int thatX = assignPos.x;
-	int thatY = assignPos.y;
-
-
-	if (queenX != thatX || queenY != thatY) //不是同位置
-	{
-		//同X
-		if (queenX == thatX)
-		{
-			board[thatX][thatY] = board[queenX][queenY];
-		}
-		else
-		{
-			if (queenY == thatY) //同Y
-			{
-				board[thatX][thatY] = board[queenX][queenY];
-			}
-			else
-			{
-				if (abs(queenX - thatX) == abs(queenY - thatY)) //斜向
-				{
-					board[thatX][thatY] = board[queenX][queenY];
-				}
-				else
-				{
-					return;
-				}
-			}
-
-		}
-
-	}
-}
-void Board::moveRook(Position startPos, Position assignPos)
-{
-	int rookX = startPos.x;
-	int rookY = startPos.x;
-	int thatX = assignPos.x;
-	int thatY = assignPos.y;
-
-	if (rookX != thatX || rookY != thatY) //不是同位置
-	{
-
-		if (rookX == thatX) //同X
-		{
-			board[thatX][thatY] = board[rookX][rookY];
-		}
-		else
-		{
-			if (rookY == thatY) //同Y
-			{
-				board[thatX][thatY] = board[rookX][rookY];
-			}
-			else
-			{
-				return;
-			}
-		}
-
-	}
-}
-
-void Board::moveBishop(Position startPos, Position assignPos)
-{
-	int bishopX = startPos.x;
-	int bishopY = startPos.y;
-	int thatX = assignPos.x;
-	int thatY = assignPos.y;
-
-	if (abs(bishopX - thatX) == abs(bishopY - thatY)) //斜向
-	{
-		board[thatX][thatY] = board[bishopX][bishopY];
-	}
-	else
-	{
-		return;
-	}
-
-}
-
-void Board::moveKnight(Position startPos, Position assignPos)
-{
-	int knightX = startPos.x;
-	int knightY = startPos.y;
-	int thatX = assignPos.x;
-	int thatY = assignPos.y;
-
-	if ((abs(knightX - thatX) == 2 && abs(knightY - thatY) == 1) || (abs(knightX - thatX) == 1 && abs(knightY - thatY) == 2)) //日字
-	{
-		board[thatX][thatY] = board[knightX][knightY];
-	}
-	else
-	{
-		return;
-	}
-
-}
-
-void Board::movePawn(Position startPos, Position assignPos)
-{
-	int pawnX = startPos.x;
-	int pawnY = startPos.y;
-	int thatX = assignPos.x;
-	int thatY = assignPos.y;
-
-	//還想不到怎麼搞第一步2格
-	//跟要判斷黑白兩方
-}
-
-
 void Board::print()
 {
 	for (int i = 0; i < BOARDLEN; i++)
@@ -248,6 +92,20 @@ void Board::print()
 		for (int j = 0; j < BOARDLEN; j++)
 		{
 			cout << setw(2) << board[i][j];
+		}
+		cout << endl;
+	}
+}
+void Board::print(Position p)
+{
+	for (int i = 0; i < BOARDLEN; i++)
+	{
+		for (int j = 0; j < BOARDLEN; j++)
+		{
+			if(i == p.x && j == p.y)
+				cout << setw(2) << "X";
+			else
+				cout << setw(2) << board[i][j];
 		}
 		cout << endl;
 	}
