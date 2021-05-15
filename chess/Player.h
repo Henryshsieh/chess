@@ -10,26 +10,66 @@ class Player
 {
 public:
 	Player();
-	Player(int);
+	Player(int, Board&);
 	void OnMove(Board&, Position&, Position&); // 選擇要從 fromPos 走到 toPos
 	void OnPromote(/*ex. Board& const board, Position& const
 	pawnPos, PieceType& outType*/); // 選擇升階類型
 	void chooseStart(Board&, Position&, Position&);
 	void chooseEnd(Board&, Position&, Position&);
-	
-private:
+	void refresh();
+	void setAvailablePath(Board&);
 	int camp;
+	piece* king;
+	piece* queen;
+	piece* bishop[2];
+	piece* knight[2];
+	piece* rook[2];
+	piece* pawn[8];
 };
 
 Player::Player()
 {
 	camp = 0;
 }
-Player::Player(int c)
+Player::Player(int c, Board& board)
 {
-	camp = c;
-}
 
+	piece* ptr = (piece*)(board.board);
+	if (c == 0)
+	{
+		rook[0] = (ptr + 7 * BOARDLEN + 0);
+		knight[0] = (ptr + 7 * BOARDLEN + 1);
+		bishop[0] = (ptr + 7 * BOARDLEN + 2);
+		queen = (ptr + 7 * BOARDLEN + 3);
+		king = (ptr + 7 * BOARDLEN + 4);
+
+		bishop[1] = (ptr + 7 * BOARDLEN + 56);
+		knight[1] = (ptr + 7 * BOARDLEN + 6);
+		rook[1] = (ptr + 7 * BOARDLEN + 7);
+		for (int i = 0; i < BOARDLEN; i++)
+		{
+			pawn[i] = (ptr + 6 * BOARDLEN + i);
+		}
+	}
+	else
+	{
+		rook[0] = (ptr + 0 * BOARDLEN + 0);
+		knight[0] = (ptr + 0 * BOARDLEN + 1);
+		bishop[0] = (ptr + 0 * BOARDLEN + 2);
+		queen = (ptr + 0 * BOARDLEN + 3);
+		king = (ptr + 0 * BOARDLEN + 4);
+		bishop[1] = (ptr + 0 * BOARDLEN + 5);
+		knight[1] = (ptr + 0 * BOARDLEN + 6);
+		rook[1] = (ptr + 0 * BOARDLEN + 7);
+		for (int i = 0; i < BOARDLEN; i++)
+		{
+			pawn[i] = (ptr + 1 * BOARDLEN + i);
+		}
+	}
+	//set available path
+	setAvailablePath(board);
+	
+}
 void Player::OnMove(Board& board, Position& start, Position& end)
 {
 	chooseStart(board, start, end);
@@ -148,8 +188,76 @@ void Player::chooseEnd(Board& board, Position& start, Position& end)
 			break;
 		default:
 			if (int(key1) == 13)
-					key1 = 'q';
-
+				key1 = 'q';
 		}
 	}
+}
+
+void Player::refresh()
+{
+	if (king->camp != camp)
+		king = NULL;
+	if (queen->camp != camp)
+		queen = NULL;
+	for (int i = 0; i < 2; i++)
+	{
+		if (bishop[i]->camp != camp)
+			bishop[i] = NULL;
+		if (knight[i]->camp != camp)
+			knight[i] = NULL;
+		if (rook[i]->camp != camp)
+			rook[i] = NULL;
+	}
+	for (int i = 0 ; i <  8 ; i ++)
+	{
+		if (pawn[i]->camp != camp)
+			pawn[i] = NULL;
+	}
+
+}
+
+void Player::setAvailablePath(Board& board)
+{
+	for (int i = 0; i < 2; i++)
+	{
+		Position p = rook[i]->_position;
+		for (int offset = p.x; offset < BOARDLEN - 1;)
+		{
+			offset++;
+			if (p.x + offset >= 0 && p.x + offset < BOARDLEN)
+			{
+				if (board.board[p.x + offset][p.y].camp != rook[i]->camp)
+					rook[i]->availbe.push_back(Position(p.x + offset, p.y));
+				else
+					break;
+			}
+			if (p.x - offset >= 0 && p.x - offset < BOARDLEN)
+			{
+				if (board.board[p.x - offset][p.y].camp != rook[i]->camp)
+					rook[i]->availbe.push_back(Position(p.x - offset, p.y));
+				else
+					break;
+			}
+		}
+		for (int offset = p.y; offset < BOARDLEN - 1;)
+		{
+			offset++;
+			if (p.y + offset >= 0 && p.y + offset < BOARDLEN)
+			{
+				if (board.board[p.x][p.y + offset].camp != rook[i]->camp)
+					rook[i]->availbe.push_back(Position(p.x, p.y + offset));
+				else
+					break;
+			}
+			if (p.y - offset >= 0 && p.y - offset < BOARDLEN)
+			{
+				if (board.board[p.x][p.y - offset].camp != rook[i]->camp)
+					rook[i]->availbe.push_back(Position(p.x, p.y - offset));
+				else
+					break;
+			}
+		}
+
+	}
+
 }

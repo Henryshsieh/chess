@@ -2,11 +2,14 @@
 #include <conio.h>
 #include <iostream>
 #include <iomanip>
+#include <vector>
 #define BOARDLEN 8
 using namespace std;
 
 struct Position {
 public:
+	Position():x(0),y(0){}
+	Position(int _x, int _y):x(_x), y(_y){}
 	int x; // X, y Coordinate.
 	int y;
 };
@@ -14,31 +17,36 @@ public:
 enum mynum
 {
 	null = 0,
-	King = 1,
-	Queen = 2,
-	Rook = 3,
-	Bishop = 4,
-	Knight = 5,
-	Pawn = 6,
+	KING = 1,
+	QUEEN = 2,
+	ROOK = 3,
+	BISHOP = 4,
+	KNIGHT = 5,
+	PAWN = 6,
 };
 
 class piece
 {
 public:
-	piece() :pieceId(null), camp(-999), moved(0) {}
-	piece(int id, int c) :pieceId(id), camp(c), moved(0) {}
+	piece() :pieceId(null), camp(-999), pieceIndex(0), moved(0) {}
+	piece(int id, int inx, int c, int x, int y) :pieceId(id), pieceIndex(inx), camp(c), moved(0) 
+	{
+		_position.x = x;
+		_position.y = y;
+	}
 	friend ostream& operator<<(ostream& str, piece p)
 	{
 		str << p.pieceId;
 		return str;
 	}
 	int pieceId;
+	int pieceIndex;
 	int camp;
 	bool moved = 0;
+	Position _position;
+	vector <Position> availbe;
 
 };
-
-
 class Board
 {
 public:
@@ -59,31 +67,30 @@ Board::Board()
 			board[i][j] = piece();
 		}
 	}
-	board[0][0] = piece(Rook, 1);
-	board[0][1] = piece(Knight, 1);
-	board[0][2] = piece(Bishop, 1);
-	board[0][3] = piece(Queen, 1);
-	board[0][4] = piece(King, 1);
-	board[0][5] = piece(Bishop, 1);
-	board[0][6] = piece(Knight, 1);
-	board[0][7] = piece(Rook, 1);
+	board[0][0] = piece(ROOK, 0, 1, 0, 0);
+	board[0][1] = piece(KNIGHT, 0, 1, 0, 1);
+	board[0][2] = piece(BISHOP, 0, 1, 0, 2);
+	board[0][3] = piece(QUEEN, 0, 1, 0, 3);
+	board[0][4] = piece(KING, 0, 1, 0, 4);
+	board[0][5] = piece(BISHOP, 1, 1, 0, 5);
+	board[0][6] = piece(KNIGHT, 1, 1, 0, 6);
+	board[0][7] = piece(ROOK, 1, 1, 0, 7);
 
-	board[7][0] = piece(Rook, 0);
-	board[7][1] = piece(Knight, 0);
-	board[7][2] = piece(Bishop, 0);
-	board[7][3] = piece(Queen, 0);
-	board[7][4] = piece(King, 0);
-	board[7][5] = piece(Bishop, 0);
-	board[7][6] = piece(Knight, 0);
-	board[7][7] = piece(Rook, 0);
+	board[7][0] = piece(ROOK, 0, 0, 7, 0);
+	board[7][1] = piece(KNIGHT, 0, 0, 7, 1);
+	board[7][2] = piece(BISHOP, 0, 0, 7, 2);
+	board[7][3] = piece(QUEEN, 0, 0, 7, 3);
+	board[7][4] = piece(KING, 0, 0, 7, 4);
+	board[7][5] = piece(BISHOP, 1, 0, 7, 5);
+	board[7][6] = piece(KNIGHT, 1, 0, 7, 6);
+	board[7][7] = piece(ROOK, 1, 0, 7, 7);
 
 	for (int i = 0; i < BOARDLEN; i++)
 	{
-		board[1][i] = piece(Pawn, 1);
-		board[6][i] = piece(Pawn, 0);
+		board[1][i] = piece(PAWN, i, 1, 1, i);
+		board[6][i] = piece(PAWN, i, 0, 6, i);
 	}
 }
-
 
 void Board::print()
 {
@@ -102,11 +109,12 @@ void Board::print(Position p)
 	{
 		for (int j = 0; j < BOARDLEN; j++)
 		{
-			if(i == p.x && j == p.y)
+			if (i == p.x && j == p.y)
 				cout << setw(2) << "X";
 			else
 				cout << setw(2) << board[i][j];
 		}
 		cout << endl;
 	}
+	cout << endl;
 }
