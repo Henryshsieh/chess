@@ -39,9 +39,9 @@ public:
 		str << p.pieceId;
 		return str;
 	}
-	int pieceId;
-	int pieceIndex;
-	int camp;
+	int pieceId; // types of chess pieces
+	int pieceIndex; // to distinguish pieces of same type
+	int camp; // black side or white side; represented by 1 and 0
 	bool moved = 0;
 	Position _position;
 	vector <Position> availbe;
