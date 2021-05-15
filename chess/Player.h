@@ -11,9 +11,9 @@ class Player
 public:
 	Player();
 	Player(int, Board&);
-	void OnMove(Board&, Position&, Position&); // 選擇要從 fromPos 走到 toPos
-	void OnPromote(/*ex. Board& const board, Position& const
-	pawnPos, PieceType& outType*/); // 選擇升階類型
+	void OnMove(Board&, Position&, Position&);
+	void OnPromote(Board& const board, Position& const pawnPos/*, PieceType& outType*/);
+		// queen, rook, bishop or knight
 	void chooseStart(Board&, Position&, Position&);
 	void chooseEnd(Board&, Position&, Position&);
 	void refresh();
