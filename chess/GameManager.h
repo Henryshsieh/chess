@@ -18,34 +18,41 @@ private:
 	//Viewer viewer;
 	Board board;
 };
+
 void GameManager::run()
 {
 	int count = 0;
 	while (true)
 	{
 		count++;
+		cout << "Player " << current_player << "'s turn\n"; // shows current player
 		if (!isGameOver())
 		{
 			cout << "game over";
 			break;
 		}
+		//v=== testing ===
 		cout << count << endl;
 		if (count == 10)
 		{
 			cout << "Asdfsafd";
 		}
+		//^======
 		if (current_player == 0)
 		{
 			players[0].OnMove(board, start, end);
-			if (move(board, start, end))
+			if (move(board, start, end)) {
+				players[0].OnPromote(board, end);
 				current_player = 1;
+			}
 		}
 		else
 		{
 			players[1].OnMove(board, start, end);
-			if (move(board, start, end))
+			if (move(board, start, end)) {
+				players[1].OnPromote(board, end);
 				current_player = 0;
-
+			}
 		}
 		board.save();
 	}
@@ -63,7 +70,6 @@ GameManager::GameManager()
 	end.x = 0;
 	end.y = 0;
 }
-
 
 bool GameManager::move(Board& board, Position& start, Position& end)
 {
@@ -114,7 +120,6 @@ bool GameManager::move(Board& board, Position& start, Position& end)
 	board.print();
 	return 1;
 }
-
 
 bool GameManager::isGameOver()
 {

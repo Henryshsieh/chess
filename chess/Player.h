@@ -12,8 +12,7 @@ public:
 	Player();
 	Player(int, Board&);
 	void OnMove(Board&, Position&, Position&);
-	void OnPromote(Board& const board, Position& const pawnPos/*, PieceType& outType*/);
-		// queen, rook, bishop or knight
+	void OnPromote(Board& board, Position& pawnPos);
 	void chooseStart(Board&, Position&, Position&);
 	void chooseEnd(Board&, Position&, Position&);
 	bool islegalPosition(Position);
@@ -33,12 +32,44 @@ Player::Player(int c, Board& board)
 
 	camp = c;
 	setAvailablePath(board);
-	
+
 }
 void Player::OnMove(Board& board, Position& start, Position& end)
 {
 	chooseStart(board, start, end);
 	chooseEnd(board, start, end);
+}
+
+void Player::OnPromote(Board& board, Position& pawnPos)
+{
+	if ((pawnPos.x == 0 || pawnPos.x == 7) && board.board[pawnPos.x][pawnPos.y].pieceId == 6) {
+		char promoteType;
+		cout << "Select promotion type('q'ueen, 'r'ook, 'b'ishop or 'k'night):";
+		cin >> promoteType;
+		while (true) {
+			if (promoteType == 'q' || promoteType == 'Q') {
+				board.board[pawnPos.x][pawnPos.y].pieceId = 2;
+				break;
+			}
+			else if (promoteType == 'r' || promoteType == 'R') {
+				board.board[pawnPos.x][pawnPos.y].pieceId = 3;
+				break;
+			}
+			else if (promoteType == 'b' || promoteType == 'B') {
+				board.board[pawnPos.x][pawnPos.y].pieceId = 4;
+				break;
+			}
+			else if (promoteType == 'k' || promoteType == 'K') {
+				board.board[pawnPos.x][pawnPos.y].pieceId = 5;
+				break;
+			}
+			else {
+				cout << "Choose again:";
+				cin >> promoteType;
+			}
+		}
+		board.print(pawnPos);
+	}
 }
 
 void Player::chooseStart(Board& board, Position& start, Position& end)
@@ -250,7 +281,7 @@ void Player::setAvailablePath(Board& board)
 						)//isEnemy
 					{
 						board.board[i][j].attack.push_back(left);
-						if(board.board[left.x][left.y].pieceId != null)
+						if (board.board[left.x][left.y].pieceId != null)
 							board.board[i][j].availablemove.push_back(left);
 					}
 					if (islegalPosition(right) && board.board[right.x][right.y].camp != board.board[i][j].camp
@@ -557,7 +588,7 @@ void Player::setAvailablePath(Board& board)
 					}
 				}
 			}
-				
+
 		}
 	}
 	//knight
@@ -577,9 +608,9 @@ bool Player::islegalPosition(Position p)
 }
 bool Player::isThreatened(Board& board, Position king)
 {
-	for (int i = 0 ; i < BOARDLEN ; i++)
+	for (int i = 0; i < BOARDLEN; i++)
 	{
-		for (int j = 0 ; j < BOARDLEN ; j++)
+		for (int j = 0; j < BOARDLEN; j++)
 		{
 			if (board.board[i][j].camp != camp)
 			{
@@ -599,7 +630,7 @@ bool Player::isThreatened(Board& board, Position king)
 							return 1;
 					}
 				}
-				
+
 			}
 		}
 	}
