@@ -4,6 +4,8 @@
 #include <iomanip>
 #include "board.h"
 #define BOARDLEN 8
+#include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
 using namespace std;
 
 class Player
@@ -11,7 +13,7 @@ class Player
 public:
 	Player();
 	Player(int, Board&);
-	void OnMove(Board&, Position&, Position&);
+	bool OnMove(Board&, Position&, Position&);
 	void OnPromote(Board& const board, Position& const pawnPos/*, PieceType& outType*/);
 		// queen, rook, bishop or knight
 	void chooseStart(Board&, Position&, Position&);
@@ -35,127 +37,57 @@ Player::Player(int c, Board& board)
 	setAvailablePath(board);
 	
 }
-void Player::OnMove(Board& board, Position& start, Position& end)
+bool Player::OnMove(Board& board, Position& start, Position& end)
 {
-	chooseStart(board, start, end);
-	chooseEnd(board, start, end);
-}
-
-void Player::chooseStart(Board& board, Position& start, Position& end)
-{
-	char key1 = '0', key2;
-	start.x = BOARDLEN / 2;
-	start.y = BOARDLEN / 2;
-	while (key1 != 'q')
+	if (!islegalPosition(start) || !islegalPosition(end))
+		return 0;
+	piece backup_chosen = board.board[start.x][start.y];
+	piece& chosen = board.board[start.x][start.y];
+	piece backup_destination = board.board[end.x][end.y];
+	piece& destination = board.board[end.x][end.y];
+	
+	if (chosen.camp == destination.camp || chosen.camp != camp)//end cant be alley, start cant be enemy
+		return 0;
+	for (auto element : chosen.availablemove)
 	{
-		board.print(start);
-		key1 = _getch();
-		switch (key1)
+		if (end.x == element.x && end.y == element.y)
 		{
-		case -32:
-			key2 = _getch();
-			switch (key2)
+			destination = chosen;
+			destination._position = end;
+			destination.moved = true;
+			chosen = piece();
+			setAvailablePath(board);
+			if (isThreatened(board, findKing(board)))
 			{
-			case 72:
-				start.x -= 1;
-				if (!islegalPosition(start))
-				{
-					cout << "choose again\n";
-					start.x += 1;
-				}
-
-				break;
-			case 80:
-				start.x += 1;
-				if (!islegalPosition(start))
-				{
-					cout << "choose again\n";
-					start.x -= 1;
-				}
-				break;
-			case 75:
-				start.y -= 1;
-				if (!islegalPosition(start))
-				{
-					cout << "choose again\n";
-					start.y += 1;
-				}
-				break;
-			case 77:
-				start.y += 1;
-				if (!islegalPosition(start))
-				{
-					cout << "choose again\n";
-					start.y -= 1;
-				}
-				break;
-			default:
-				break;
+				cout << "protect the king!\n";
+				destination = backup_destination;
+				chosen = backup_chosen;
+				return 0;
 			}
-			break;
-		default:
-			if (int(key1) == 13)
-				key1 = 'q';
 		}
 	}
-	end = start;
-}
-void Player::chooseEnd(Board& board, Position& start, Position& end)
-{
-	char key1 = '0', key2;
-	while (key1 != 'q')
+	for (auto element : chosen.attack)
 	{
-		board.print(end);
-		key1 = _getch();
-		switch (key1)
+		if (end.x == element.x && end.y == element.y && destination.camp != NULL && destination.camp != camp)
 		{
-		case -32:
-			key2 = _getch();
-			switch (key2)
+			destination = chosen;
+			destination._position = end;
+			destination.moved = true;
+			chosen = piece();
+			setAvailablePath(board);
+			if (isThreatened(board, findKing(board)))
 			{
-			case 72:
-				end.x -= 1;
-				if (!islegalPosition(end))
-				{
-					cout << "choose again\n";
-					end.x += 1;
-				}
-				break;
-			case 80:
-				end.x += 1;
-				if (!islegalPosition(end))
-				{
-					cout << "choose again\n";
-					end.x -= 1;
-				}
-				break;
-			case 75:
-				end.y -= 1;
-				if (!islegalPosition(end))
-				{
-					cout << "choose again\n";
-					end.y += 1;
-				}
-				break;
-			case 77:
-				end.y += 1;
-				if (!islegalPosition(end))
-				{
-					cout << "choose again\n";
-					end.y -= 1;
-				}
-
-				break;
-			default:
-				break;
+				cout << "protect the king!\n";
+				destination = backup_destination;
+				chosen = backup_chosen;
+				return 0;
 			}
-			break;
-		default:
-			if (int(key1) == 13)
-				key1 = 'q';
 		}
 	}
+	board.print();
+	return 1;
 }
+
 void Player::setAvailablePath(Board& board)
 {
 	//rook

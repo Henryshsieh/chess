@@ -1,14 +1,11 @@
-/*This source code copyrighted by Lazy Foo' Productions (2004-2020)
-and may not be redistributed without written permission.*/
-
-
-#include "Player.h"
+﻿#include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
+#include "board.h"
 #include "GameManager.h"
-
 int main()
 {
 	GameManager game;
 	game.run();
+	return EXIT_SUCCESS;
 
-	return 0;
 }
