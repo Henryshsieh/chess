@@ -72,6 +72,7 @@ bool GameManger::move(Board& board, Position& start, Position& end)
 		{
 			destination = chosen;
 			destination._position = end;
+			destination.moved = true;
 			chosen = piece();
 			players[0].setAvailablePath(board);
 			players[1].setAvailablePath(board);
@@ -94,7 +95,7 @@ bool GameManger::isGameOver()
 	Board temp = board;
 	for (int i = 0 ; i < 2 ; i ++)
 	{
-		if (!players[i].isThreatened(board, players[current_player].findKing(board)))
+		if (!players[i].isThreatened(board, players[i].findKing(board)))
 			break;
 		for (int j = 0 ; j < BOARDLEN ; j++)
 		{
@@ -106,7 +107,7 @@ bool GameManger::isGameOver()
 					{
 						if (move(temp, temp.board[j][k]._position, element))
 						{
-							if (!players[i].isThreatened(temp, players[current_player].findKing(board)))
+							if (!players[i].isThreatened(temp, players[i].findKing(board)))
 								return 0;
 							temp = board;
 						}
