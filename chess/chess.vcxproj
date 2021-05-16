@@ -72,14 +72,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\Jamie\source\repos\chess\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Jamie\source\repos\chess\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\Users\Jamie\source\repos\chess\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\Jamie\source\repos\chess\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)SDL2\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)SDL2\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
