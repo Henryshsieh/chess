@@ -440,7 +440,44 @@ void Player::setAvailablePath(Board& board)
 		}
 	}
 
+	//king
+	if (king != NULL)
+	{
+		king->availbe = vector<Position>();
+		Position p = king->_position;
+		Position p1;
+		Position p2;
+		Position check;
+		p1.x = 1;
+		p1.y = 1;
+		p2.x = 1;
+		p2.y = 0;
+		//xxo
+		//xxo <-rotate
+		//xxx
+		for (int j = 0; j < 4; j++)
+		{
+			int tmp = p1.x;
+			p1.x = p1.y;
+			p1.y = -tmp;
+			check.x = p.x + p1.x;
+			check.y = p.y + p1.y;
+			if (islegalPosition(check) && board.board[check.x][check.y].camp != king->camp)
+			{
+				king->availbe.push_back(check);
+			}
 
+			tmp = p2.x;
+			p2.x = p2.y;
+			p2.y = -tmp;
+			check.x = p.x + p2.x;
+			check.y = p.y + p2.y;
+			if (islegalPosition(check) && board.board[check.x][check.y].camp != king->camp)
+			{
+				king->availbe.push_back(check);
+			}
+		}
+	}
 }
 
 bool Player::islegalPosition(Position p)
