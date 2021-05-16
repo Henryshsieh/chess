@@ -1,14 +1,15 @@
 ﻿#pragma once
 #include "Player.h"
+#include <fstream>
 #include "Viewer.h"
 class GameManger
 {
 public:
 	GameManger();
-	~GameManger();
 	void run();
-	bool move(Board&, Position&, Position&);
-	void refresh(Board&);//refresh players' member status
+	bool move(Board& board, Position&, Position&);
+	bool isGameOver();
+	void refresh();//refresh players' member status
 	Position start;
 	Position end;
 
@@ -22,25 +23,26 @@ void GameManger::run()
 {
 	while (true)
 	{
+		if (!isGameOver())
+		{
+			cout << "game over";
+			break;
+		}
 		if (current_player == 0)
 		{
-			cout << "player00000000000000000000000000000000000000000000000000\n";
 			players[0].OnMove(board, start, end);
-			cout << start.x << " " << start.y << endl;
-			cout << end.x << " " << end.y << endl;
 			if (move(board, start, end))
 				current_player = 1;
-			
 		}
 		else
 		{
-			cout << "player11111111111111111111111111111111111111\n";
 			players[1].OnMove(board, start, end);
 			if (move(board, start, end))
 				current_player = 0;
-		
+
 		}
-		refresh(board);
+		refresh();//refresh players' member status
+		board.save();
 	}
 }
 
@@ -57,315 +59,63 @@ GameManger::GameManger()
 	end.y = 0;
 }
 
-GameManger::~GameManger()
-{
-}
 
 bool GameManger::move(Board& board, Position& start, Position& end)
 {
+	piece backup_chosen = board.board[start.x][start.y];
 	piece& chosen = board.board[start.x][start.y];
+	piece backup_destination = board.board[end.x][end.y];
 	piece& destination = board.board[end.x][end.y];
 	if (chosen.camp == destination.camp || chosen.camp != current_player)//end cant be alley, start cant be enemy
 		return 0;
-	switch (chosen.pieceId)
+	for (auto element : chosen.availbe)
 	{
-	case null:
-		cout << "null\n";
-		return 0;
-	case KING:
-		if (start.x != end.x || start.y != end.y ) //不是同位置
+		if (end.x == element.x && end.y == element.y)
 		{
-			if (abs(end.x - start.x) <= 1 && abs(end.y - start.y) <= 1)
-			{
-				destination = chosen;
-				players[current_player].king = &(destination);
-				destination._position = end;
-				chosen = piece();
-			}
-			else
-			{
-				cout << "cant move king\n";
-				return 0;
-			}
-		}
-		else
-		{
-			cout << "same position\n";
-			return 0;
-		}
-		return 1;
-	case QUEEN:
-		if (start.x != end.x || start.y != end.y) //不是同位置
-		{
-			//同X horizontal
-			if (start.x == end.x)
-			{
-				for (int i = 0,j = 0 ; j < abs(end.y - start.y) - 1 ;j++)
-				{
-					if (end.y - start.y < 0)
-						i--;
-					else
-						i++;
-					if (board.board[start.x][start.y + i].pieceId != null)
-					{
-						cout << "crossing\n";
-						return 0;
-					}
-					
-				}
-				players[current_player].queen = &(destination);
-				destination = chosen;
-				destination._position = end;
-				chosen = piece();
-			}
-			//vertical
-			else if (start.y == end.y)
-			{
-				for (int i = 0, j = 0; j < abs(end.x - start.x) - 1 ; j++)
-				{
-					if (end.x - start.x < 0)
-						i--;
-					else
-						i++;
-					if (board.board[start.x + i][start.y].pieceId != null)
-					{
-						cout << "crossing\n";
-						return 0;
-					}
-					
-				}
-				players[current_player].queen = &(destination);
-				destination = chosen;
-				destination._position = end;
-				chosen = piece();
-			}
-			else if (abs(start.x - end.x) == abs(start.y - end.y)) //斜向
-			{
-				for (int i = 0, k = 0, j = 0; j < abs(end.y - start.y) - 1 ; j++)
-				{
-					if (end.y - start.y < 0)
-						i--;
-					else
-						i++;
-					if (end.x - start.x < 0)
-						k--;	
-					else
-						k++;
-					if (board.board[start.x + k][start.y + i].pieceId != null)
-					{
-						cout << "crossing\n";
-						return 0;
-					}
-					
-				}
-
-				players[current_player].queen = &(destination);
-				destination = chosen;
-				destination._position = end;
-				chosen = piece();
-			}
-			else
-			{
-				cout << "cant move queens \n";
-				return 0;
-			}
-		}
-		else
-		{
-			cout << "same position\n";
-			return 0;
-		}
-		return 1;
-	case ROOK:
-
-		if (start.x != end.x || start.y != end.y) //不是同位置
-		{
-			if (start.x == end.x) //同X
-			{
-				for (int i = 0, j = 0; j < abs(end.y - start.y) - 1; j++)
-				{
-					if (end.y - start.y < 0)
-						i--;
-					else
-						i++;
-					if (board.board[start.x][start.y + i].pieceId != null)
-					{
-						cout << "crossing\n";
-						return 0;
-					}
-
-				}
-				players[current_player].rook[chosen.pieceIndex] = &(destination);
-				destination = chosen;
-				destination._position = end;
-				chosen = piece();
-			}
-			else if (start.y == end.y) //同Y
-			{
-				for (int i = 0, j = 0; j < abs(end.x - start.x) - 1; j++)
-				{
-					if (end.x - start.x < 0)
-						i--;
-					else
-						i++;
-					if (board.board[start.x + i][start.y].pieceId != null)
-					{
-						cout << "crossing\n";
-						return 0;
-					}
-
-				}
-				players[current_player].rook[chosen.pieceIndex] = &(destination);
-				destination = chosen;
-				destination._position = end;
-				chosen = piece();
-			}
-			else {
-				cout << "cant move rook\n";
-				return 0;
-			}
-		}
-		else
-		{
-			cout << "same position\n";
-			return 0;
-		}
-		return 1;
-	case BISHOP:
-		if (start.x != end.x || start.y != end.y) //不是同位置
-		{
-			if (abs(start.x - end.x) == abs(start.y - end.y)) //斜向
-			{
-				for (int i = 0, k = 0, j = 0; j < abs(end.y - start.y) - 1; j++)
-				{
-					if (end.y - start.y < 0)
-						i--;
-					else
-						i++;
-					if (end.x - start.x < 0)
-						k--;
-					else
-						k++;
-					if (board.board[start.x + k][start.y + i].pieceId != null)
-					{
-						cout << "crossing\n";
-						return 0;
-					}
-
-				}
-				players[current_player].bishop[chosen.pieceIndex] = &(destination);
-				destination = chosen;
-				destination._position = end;
-				chosen = piece();
-			}
-			else
-			{
-				cout << "cant move bishop\n";
-				return 0;
-			}
-		}
-		else
-		{
-			cout << "same position\n";
-			return 0;
-		}
-		return 1;
-	case KNIGHT:
-		if ((abs(start.x - end.x) == 2 && abs(start.y - end.y) == 1) || (abs(start.x - end.x) == 1 && abs(start.y - end.y) == 2)) //日字
-		{
-			players[current_player].bishop[chosen.pieceIndex] = &(destination);
 			destination = chosen;
 			destination._position = end;
 			chosen = piece();
-		}
-		else
-		{
-			cout << "cant move knight\n";
-			return 0;
-		}
-		return 1;
-	case PAWN:
-		if (current_player == 0)
-		{
-			if (destination.pieceId != null && start.x - end.x == 1 && abs(start.y - end.y) == 1)
+			refresh();
+			if (players[current_player].isThreatened(board, players[current_player].king->_position))
 			{
-				players[current_player].pawn[chosen.pieceIndex] = &(destination);
-				destination = chosen;
-				destination._position = end;
-				chosen = piece();
-			}
-			else if (chosen.moved && start.x - end.x == 1 && start.y == end.y && destination.pieceId == null )//moved
-			{
-				players[current_player].pawn[chosen.pieceIndex] = &(destination);
-				destination = chosen;
-				destination._position = end;
-				chosen = piece();
-			}
-			else if (!chosen.moved && start.y == end.y && destination.pieceId == null)
-			{
-				if (start.x - end.x == 1)
-				{
-					chosen.moved = true;
-					players[current_player].pawn[chosen.pieceIndex] = &(destination);
-					destination = chosen;
-					destination._position = end;
-					chosen = piece();
-				}
-				else if (start.x - end.x == 2)
-				{
-					chosen.moved = true;
-					players[current_player].pawn[chosen.pieceIndex] = &(destination);
-					destination = chosen;
-					destination._position = end;
-					chosen = piece();
-				}
+				cout << "protect the king!\n";
+				destination = backup_destination;
+				chosen = backup_chosen;
+				return 0;
 			}
 			else
 			{
-				cout << "cant move\n";
-				return 0;
+				switch (destination.pieceId)
+				{
+				case KING:
+					players[current_player].king = &destination;
+					return 1;
+				case KNIGHT:
+					players[current_player].knight[destination.pieceIndex] = &destination;
+					return 1;
+				case QUEEN:
+					players[current_player].queen = &destination;
+					return 1;
+				case ROOK:
+					players[current_player].rook[destination.pieceIndex] = &destination;
+					return 1;
+				case BISHOP:
+					players[current_player].bishop[destination.pieceIndex] = &destination;
+					return 1;
+				case PAWN:
+					players[current_player].pawn[destination.pieceIndex] = &destination;
+					return 1;
+				default:
+					break;
+				}
 			}
-			return 1;
 		}
-		else 
-		{
-			if (destination.pieceId != null && end.x - start.x == 1 && abs(end.y - start.y) == 1)//kill enemy
-			{
-				players[current_player].pawn[chosen.pieceIndex] = &(destination);
-				destination = chosen;
-				destination._position = end;
-				chosen = piece();
-			}
-			else if (chosen.moved && end.x - start.x == 1 && start.y == end.y && destination.pieceId == null )//moved
-			{
-				players[current_player].pawn[chosen.pieceIndex] = &(destination);
-				destination = chosen;
-				destination._position = end;
-				chosen = piece();
-			}
-			else if (!chosen.moved && start.y == end.y && destination.pieceId == null )
-			{
-				players[current_player].pawn[chosen.pieceIndex] = &(destination);
-				chosen.moved = true;
-				destination = chosen;
-				destination._position = end;
-				chosen = piece();
-			}
-			else
-			{
-				cout << "cant move\n";
-				return 0;
-			}
-			return 1;
-		}
-		return 1;
-	default:
-		return 0;
 	}
+	return 0;
 }
 
 
-void GameManger::refresh(Board& board)
+void GameManger::refresh()
 {
 	for (int index = 0 ; index < 2 ; index ++)
 	{
@@ -373,7 +123,6 @@ void GameManger::refresh(Board& board)
 		if (players[index].king != NULL && players[index].king->camp != players[index].camp)
 			players[index].king = NULL;
 		if (players[index].queen != NULL && players[index].queen->camp != players[index].camp)
-			players[index].queen = NULL;
 		for (int i = 0; i < 2; i++)
 		{
 			if (players[index].bishop != NULL && players[index].bishop[i]->camp != players[index].camp)
@@ -391,4 +140,34 @@ void GameManger::refresh(Board& board)
 
 	}
 	
+}
+
+bool GameManger::isGameOver()
+{
+	Board temp = board;
+	for (int i = 0 ; i < 2 ; i ++)
+	{
+		if (!players[i].isThreatened(board, players[i].king->_position))
+			break;
+		for (int j = 0 ; j < BOARDLEN ; j++)
+		{
+			for (int k = 0 ; k < BOARDLEN ; k++)
+			{
+				if (board.board[j][k].camp == players[i].camp)
+				{
+					for (auto element : board.board[j][k].availbe)
+					{
+						if (move(temp, temp.board[j][k]._position, element))
+						{
+							if (!players[i].isThreatened(temp, players[i].king->_position))
+								return 0;
+							temp = board;
+						}
+					}
+				}
+			}
+		}
+	}
+	return 1;
+
 }

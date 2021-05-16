@@ -17,6 +17,8 @@ public:
 	void chooseStart(Board&, Position&, Position&);
 	void chooseEnd(Board&, Position&, Position&);
 	bool islegalPosition(Position);
+	void refresh(Board&);
+	bool isThreatened(Board&, Position);
 	void setAvailablePath(Board&);
 	int camp;
 	piece* king;
@@ -26,6 +28,7 @@ public:
 	piece* rook[2];
 	piece* pawn[8];
 };
+
 
 Player::Player()
 {
@@ -107,7 +110,7 @@ void Player::chooseStart(Board& board, Position& start, Position& end)
 			{
 			case 72:
 				start.x -= 1;
-				if (!(start.x < BOARDLEN && start.x >= 0 && start.y < BOARDLEN && start.y >= 0))
+				if (!islegalPosition(start))
 				{
 					cout << "choose again\n";
 					start.x += 1;
@@ -116,7 +119,7 @@ void Player::chooseStart(Board& board, Position& start, Position& end)
 				break;
 			case 80:
 				start.x += 1;
-				if (!(start.x < BOARDLEN && start.x >= 0 && start.y < BOARDLEN && start.y >= 0))
+				if (!islegalPosition(start))
 				{
 					cout << "choose again\n";
 					start.x -= 1;
@@ -124,7 +127,7 @@ void Player::chooseStart(Board& board, Position& start, Position& end)
 				break;
 			case 75:
 				start.y -= 1;
-				if (!(start.x < BOARDLEN && start.x >= 0 && start.y < BOARDLEN && start.y >= 0))
+				if (!islegalPosition(start))
 				{
 					cout << "choose again\n";
 					start.y += 1;
@@ -132,7 +135,7 @@ void Player::chooseStart(Board& board, Position& start, Position& end)
 				break;
 			case 77:
 				start.y += 1;
-				if (!(start.x < BOARDLEN && start.x >= 0 && start.y < BOARDLEN && start.y >= 0))
+				if (!islegalPosition(start))
 				{
 					cout << "choose again\n";
 					start.y -= 1;
@@ -165,7 +168,7 @@ void Player::chooseEnd(Board& board, Position& start, Position& end)
 			{
 			case 72:
 				end.x -= 1;
-				if (!(end.x < BOARDLEN && end.x >= 0 && end.y < BOARDLEN && end.y >= 0))
+				if (!islegalPosition(end))
 				{
 					cout << "choose again\n";
 					end.x += 1;
@@ -173,26 +176,26 @@ void Player::chooseEnd(Board& board, Position& start, Position& end)
 				break;
 			case 80:
 				end.x += 1;
-				if (!(end.x < BOARDLEN && end.x >= 0 && end.y < BOARDLEN && end.y >= 0))
+				if (!islegalPosition(end))
 				{
 					cout << "choose again\n";
-					end.x += 1;
+					end.x -= 1;
 				}
 				break;
 			case 75:
 				end.y -= 1;
-				if (!(end.x < BOARDLEN && end.x >= 0 && end.y < BOARDLEN && end.y >= 0))
+				if (!islegalPosition(end))
 				{
 					cout << "choose again\n";
-					end.x += 1;
+					end.y += 1;
 				}
 				break;
 			case 77:
 				end.y += 1;
-				if (!(end.x < BOARDLEN && end.x >= 0 && end.y < BOARDLEN && end.y >= 0))
+				if (!islegalPosition(end))
 				{
 					cout << "choose again\n";
-					end.x += 1;
+					end.y -= 1;
 				}
 
 				break;
@@ -282,14 +285,14 @@ void Player::setAvailablePath(Board& board)
 		}
 	}
 
-	//pawn, crossing piece issue has not done
+	//pawn
 	for (int i = 0 ; i < BOARDLEN ; i ++)
 	{
 		if(pawn[i] == NULL)
 			continue;
 		pawn[i]->availbe = vector<Position>();
 		Position forward_position = pawn[i]->_position;
-		forward_position.x = (camp == 0) ? forward_position.x - 1 : forward_position.x + 1;
+		forward_position.x = (camp == 0) ? forward_position.x - 1 : forward_position.x + 1;//determine where is front
 		
 		Position left = forward_position;
 		Position right = forward_position;
@@ -310,12 +313,15 @@ void Player::setAvailablePath(Board& board)
 		}
 
 
-		//pawn has moved
-		forward_position.x = (camp == 0) ? forward_position.x - 1 : forward_position.x + 1;
+		//pawn has not moved
+		Position two_step = forward_position;
+		two_step.x = (camp == 0) ? forward_position.x - 1 : forward_position.x + 1;
 		if (!pawn[i]->moved)
 		{
-			if (islegalPosition(forward_position) && board.board[forward_position.x][forward_position.y].pieceId == null)
-				pawn[i]->availbe.push_back(forward_position);
+			if (islegalPosition(forward_position) 
+				&& board.board[two_step.x][two_step.y].pieceId == null
+				&& board.board[forward_position.x][forward_position.y].pieceId == null)
+				pawn[i]->availbe.push_back(two_step);
 		}
 	}
 
@@ -361,7 +367,7 @@ void Player::setAvailablePath(Board& board)
 				bishop[i]->availbe.push_back(left_down);
 				if (board.board[left_down.x][left_down.y].pieceId != null)
 					left_down_crossing_piece = true;
-
+				
 			}
 			else
 			{
@@ -462,7 +468,7 @@ void Player::setAvailablePath(Board& board)
 			p1.y = -tmp;
 			check.x = p.x + p1.x;
 			check.y = p.y + p1.y;
-			if (islegalPosition(check) && board.board[check.x][check.y].camp != king->camp)
+			if (islegalPosition(check) && board.board[check.x][check.y].camp != king->camp && !isThreatened(board, check))
 			{
 				king->availbe.push_back(check);
 			}
@@ -472,10 +478,148 @@ void Player::setAvailablePath(Board& board)
 			p2.y = -tmp;
 			check.x = p.x + p2.x;
 			check.y = p.y + p2.y;
-			if (islegalPosition(check) && board.board[check.x][check.y].camp != king->camp)
+			if (islegalPosition(check) && board.board[check.x][check.y].camp != king->camp && !isThreatened(board, check))
 			{
 				king->availbe.push_back(check);
 			}
+		}
+	}
+	//queen
+
+	if (queen != NULL)
+	{
+		queen->availbe = vector<Position>();
+		Position p = queen->_position;
+		Position up = p;
+		Position down = p;
+		Position left = p;
+		Position right = p;
+		Position left_up = p;
+		Position left_down = p;
+		Position right_up = p;
+		Position right_down = p;
+
+		bool up_crossing_piece = 0;
+		bool down_crossing_piece = 0;
+		bool left_crossing_piece = 0;
+		bool right_crossing_piece = 0;
+
+		bool left_up_crossing_piece = 0;
+		bool left_down_crossing_piece = 0;
+		bool right_down_crossing_piece = 0;
+		bool right_up_crossing_piece = 0;
+
+		for (int offset = 0; offset < BOARDLEN - 1; offset++)
+		{
+			left_up.x--;
+			left_up.y--;
+			left_down.x++;
+			left_down.y--;
+			right_down.x++;
+			right_down.y++;
+			right_up.x--;
+			right_up.y++;
+			if (islegalPosition(left_up) && board.board[left_up.x][left_up.y].camp != queen->camp && !left_up_crossing_piece)
+			{
+				queen->availbe.push_back(left_up);
+				if (board.board[left_up.x][left_up.y].pieceId != null)
+					left_up_crossing_piece = true;
+
+			}
+			else
+			{
+				left_up_crossing_piece = true;
+			}
+			if (islegalPosition(left_down) && board.board[left_down.x][left_down.y].camp != queen->camp && !left_down_crossing_piece)
+			{
+				queen->availbe.push_back(left_down);
+				if (board.board[left_down.x][left_down.y].pieceId != null)
+					left_down_crossing_piece = true;
+
+			}
+			else
+			{
+				left_down_crossing_piece = true;
+			}
+
+			if (islegalPosition(right_down) && board.board[right_down.x][right_down.y].camp != queen->camp && !right_down_crossing_piece)
+			{
+				queen->availbe.push_back(right_down);
+				if (board.board[right_down.x][right_down.y].pieceId != null)
+					right_down_crossing_piece = true;
+
+			}
+			else
+			{
+				right_down_crossing_piece = true;
+			}
+
+			if (islegalPosition(right_up) && board.board[right_up.x][right_up.y].camp != queen->camp && !right_up_crossing_piece)
+			{
+				queen->availbe.push_back(right_up);
+				if (board.board[right_up.x][right_up.y].pieceId != null)
+					right_up_crossing_piece = true;
+
+			}
+			else
+			{
+				right_up_crossing_piece = true;
+			}
+		}
+		for (int offset = 0; offset < BOARDLEN - 1; offset++)
+		{
+			up.x--;
+			down.x++;
+			left.y--;
+			right.y++;
+			if (islegalPosition(up) && board.board[up.x][up.y].camp != queen->camp && !up_crossing_piece)
+			{
+				queen->availbe.push_back(up);
+				if (board.board[up.x][up.y].pieceId != null)
+					up_crossing_piece = true;
+
+			}
+			else
+			{
+				up_crossing_piece = true;
+			}
+			if (islegalPosition(down) && board.board[down.x][down.y].camp != queen->camp && !down_crossing_piece)
+			{
+				queen->availbe.push_back(down);
+				if (board.board[down.x][down.y].pieceId != null)
+					down_crossing_piece = true;
+
+			}
+			else
+			{
+				down_crossing_piece = true;
+			}
+
+			if (islegalPosition(left) && board.board[left.x][left.y].camp != queen->camp && !left_crossing_piece)
+			{
+				queen->availbe.push_back(left);
+				if (board.board[left.x][left.y].pieceId != null)
+					left_crossing_piece = true;
+
+			}
+			else
+			{
+				left_crossing_piece = true;
+			}
+
+			if (islegalPosition(right) && board.board[right.x][right.y].camp != queen->camp && !right_crossing_piece)
+			{
+				queen->availbe.push_back(right);
+				if (board.board[right.x][right.y].pieceId != null)
+					right_crossing_piece = true;
+
+			}
+			else
+			{
+				right_crossing_piece = true;
+			}
+
+
 		}
 	}
 }
@@ -487,4 +631,94 @@ bool Player::islegalPosition(Position p)
 		return 1;
 	}
 	return 0;
+}
+
+bool Player::isThreatened(Board& board, Position p)
+{
+
+	for (int i = 0 ; i < BOARDLEN ; i++)
+	{
+		for (int j = 0 ; j < BOARDLEN ; j++)
+		{
+			if (board.board[i][j].camp != board.board[p.x][p.y].camp)
+			{
+				for (auto element : board.board[i][j].availbe)
+				{
+					if (element.x == p.x && element.y == p.y)
+						return 1;
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+void Player::OnPromote(Board& const board, Position& const pawnPos/*, PieceType& outType*/)
+{
+	for (int i = 0 ; i < BOARDLEN ; i++)
+	{
+		int n = -1;
+		int check = 0;
+		if (camp == 0)
+			check = 0;
+		else
+			check = 7;
+		while (pawn[i]->_position.x == check && !(n <= 4 && n >= 1))
+		{
+			cout << "promote pawn:\n";
+			cout << "1.queen\n";
+			cout << "2.rook\n";
+			cout << "3.bishop\n";
+			cout << "4.knight\n";
+			cin >> n;
+			switch (n)
+			{
+			case 1:
+				pawn[i]->pieceId = QUEEN;
+				break;
+			case 2:
+				pawn[i]->pieceId = ROOK;
+				break;
+			case 3:
+				pawn[i]->pieceId = BISHOP;
+				break;
+			case 4:
+				pawn[i]->pieceId = KNIGHT;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	
+}
+
+
+
+void Player::refresh(Board& board)
+{
+	for (int index = 0; index < 2; index++)
+	{
+		setAvailablePath(board);
+		if (king != NULL && king->camp != camp)
+			king = NULL;
+		if (queen != NULL && queen->camp != camp)
+			queen = NULL;
+		for (int i = 0; i < 2; i++)
+		{
+			if (bishop != NULL && bishop[i]->camp != camp)
+				bishop[i] = NULL;
+			if (knight[i] != NULL && knight[i]->camp != camp)
+				knight[i] = NULL;
+			if (rook[i]->camp != camp)
+				rook[i] = NULL;
+		}
+		for (int i = 0; i < 8; i++)
+		{
+			if (pawn[i] != NULL && pawn[i]->camp != camp)
+				pawn[i] = NULL;
+		}
+
+	}
+
 }

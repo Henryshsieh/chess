@@ -1,6 +1,7 @@
 #pragma once
 #include <conio.h>
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include <vector>
 #define BOARDLEN 8
@@ -36,7 +37,10 @@ public:
 	}
 	friend ostream& operator<<(ostream& str, piece p)
 	{
-		str << p.pieceId;
+		if (p.pieceId == 0)
+			str << " ";
+		else
+			str << p.pieceId;
 		return str;
 	}
 	int pieceId; // types of chess pieces
@@ -52,6 +56,7 @@ class Board
 public:
 	//declare chess board.
 	piece board[BOARDLEN][BOARDLEN];
+	void save();
 	void print();
 	void print(Position);
 	Board();
@@ -101,6 +106,22 @@ void Board::print()
 			cout << setw(2) << board[i][j];
 		}
 		cout << endl;
+	}
+}
+
+
+void Board::save()
+{
+	fstream str;
+	str.open("./file.txt", std::ios_base::app | std::ios_base::in);
+
+	for (int i = 0; i < BOARDLEN; i++)
+	{
+		for (int j = 0; j < BOARDLEN; j++)
+		{
+			str << " " << board[i][j];
+		}
+		str << endl;
 	}
 }
 void Board::print(Position p)
