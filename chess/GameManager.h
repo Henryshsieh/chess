@@ -8,6 +8,7 @@ public:
 	~GameManger();
 	void run();
 	bool move(Board&, Position&, Position&);
+	void refresh(Board&);//refresh players' member status
 	Position start;
 	Position end;
 
@@ -23,20 +24,23 @@ void GameManger::run()
 	{
 		if (current_player == 0)
 		{
-			cout << "player0\n";
+			cout << "player00000000000000000000000000000000000000000000000000\n";
 			players[0].OnMove(board, start, end);
+			cout << start.x << " " << start.y << endl;
+			cout << end.x << " " << end.y << endl;
 			if (move(board, start, end))
 				current_player = 1;
-			players[0].refresh();
+			
 		}
 		else
 		{
-			cout << "player1\n";
+			cout << "player11111111111111111111111111111111111111\n";
 			players[1].OnMove(board, start, end);
 			if (move(board, start, end))
 				current_player = 0;
-			players[1].refresh();
+		
 		}
+		refresh(board);
 	}
 }
 
@@ -144,7 +148,7 @@ bool GameManger::move(Board& board, Position& start, Position& end)
 					else
 						i++;
 					if (end.x - start.x < 0)
-						k--;
+						k--;	
 					else
 						k++;
 					if (board.board[start.x + k][start.y + i].pieceId != null)
@@ -358,4 +362,33 @@ bool GameManger::move(Board& board, Position& start, Position& end)
 	default:
 		return 0;
 	}
+}
+
+
+void GameManger::refresh(Board& board)
+{
+	for (int index = 0 ; index < 2 ; index ++)
+	{
+		players[index].setAvailablePath(board);
+		if (players[index].king != NULL && players[index].king->camp != players[index].camp)
+			players[index].king = NULL;
+		if (players[index].queen != NULL && players[index].queen->camp != players[index].camp)
+			players[index].queen = NULL;
+		for (int i = 0; i < 2; i++)
+		{
+			if (players[index].bishop != NULL && players[index].bishop[i]->camp != players[index].camp)
+				players[index].bishop[i] = NULL;
+			if (players[index].knight[i] != NULL && players[index].knight[i]->camp != players[index].camp)
+				players[index].knight[i] = NULL;
+			if (players[index].rook[i]->camp != players[index].camp)
+				players[index].rook[i] = NULL;
+		}
+		for (int i = 0; i < 8; i++)
+		{
+			if (players[index].pawn[i] != NULL && players[index].pawn[i]->camp != players[index].camp)
+				players[index].pawn[i] = NULL;
+		}
+
+	}
+	
 }

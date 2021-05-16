@@ -105,16 +105,48 @@ void Board::print()
 }
 void Board::print(Position p)
 {
+	piece temp[BOARDLEN][BOARDLEN];
+	vector<Position> vec;
 	for (int i = 0; i < BOARDLEN; i++)
 	{
 		for (int j = 0; j < BOARDLEN; j++)
 		{
+			temp[i][j] = board[i][j];
 			if (i == p.x && j == p.y)
+			{
+				vec.resize(board[i][j].availbe.size());
+				vec.assign(board[i][j].availbe.begin(), board[i][j].availbe.end());
+			}
+		}
+	}
+
+	for (int i = 0; i < BOARDLEN; i++)
+	{
+		for (int j = 0; j < BOARDLEN; j++)
+		{
+			int check = 0;
+			if (i == p.x && j == p.y)
+			{
 				cout << setw(2) << "X";
-			else
+				check = 1;
+			}
+			else if(vec.size())
+				for (auto element:vec)
+				{
+					if (i == element.x && j == element.y)
+					{
+						cout << setw(2) << "*";
+						check = 1;
+					}
+				}
+			if(!check)
+			{
 				cout << setw(2) << board[i][j];
+			}
+			
 		}
 		cout << endl;
 	}
 	cout << endl;
 }
+
