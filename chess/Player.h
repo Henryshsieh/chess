@@ -395,6 +395,51 @@ void Player::setAvailablePath(Board& board)
 		}
 	}
 
+	//knight
+	//cos sin 
+	//-sin cos
+	//0 1
+	//-1 0
+	//y , -x
+	for (int i = 0; i < 2; i++)
+	{
+		if(knight[i] == NULL)
+			continue;
+		knight[i]->availbe = vector<Position>();
+		Position p = knight[i]->_position;
+		Position p1;
+		Position p2;
+		Position check;
+		p1.x = 2;
+		p1.y = 1;
+		p2.x = 1;
+		p2.y = 2;
+		for (int j = 0 ; j < 4 ; j ++)
+		{
+			//rotate
+			int tmp = p1.x;
+			p1.x = p1.y;
+			p1.y = -tmp;
+			check.x = p.x + p1.x;
+			check.y = p.y + p1.y;
+			if (islegalPosition(check) && board.board[check.x][check.y].camp != knight[i]->camp)
+			{
+				knight[i]->availbe.push_back(check);
+			}
+
+			//rotate
+			tmp = p2.x;
+			p2.x = p2.y;
+			p2.y = -tmp;
+			check.x = p.x + p2.x;
+			check.y = p.y + p2.y;
+			if (islegalPosition(check) && board.board[check.x][check.y].camp != knight[i]->camp)
+			{
+				knight[i]->availbe.push_back(check);
+			}
+		}
+	}
+
 
 }
 
