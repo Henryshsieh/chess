@@ -282,7 +282,7 @@ void Player::setAvailablePath(Board& board)
 		}
 	}
 
-	//pawn
+	//pawn, crossing piece issue has not done
 	for (int i = 0 ; i < BOARDLEN ; i ++)
 	{
 		if(pawn[i] == NULL)
@@ -319,6 +319,81 @@ void Player::setAvailablePath(Board& board)
 		}
 	}
 
+	//bishop
+	for (int i = 0; i < 2; i++)
+	{
+		if (bishop[i] == NULL)
+			continue;
+		bishop[i]->availbe = vector<Position>();
+		Position p = bishop[i]->_position;
+		Position left_up = p;
+		Position left_down = p;
+		Position right_up = p;
+		Position right_down = p;
+		bool left_up_crossing_piece = 0;
+		bool left_down_crossing_piece = 0;
+		bool right_down_crossing_piece = 0;
+		bool right_up_crossing_piece = 0;
+
+		for (int offset = 0; offset < BOARDLEN - 1; offset++)
+		{
+			left_up.x--;
+			left_up.y--;
+			left_down.x++;
+			left_down.y--;
+			right_down.x++;
+			right_down.y++;
+			right_up.x--;
+			right_up.y++;
+			if (islegalPosition(left_up) && board.board[left_up.x][left_up.y].camp != bishop[i]->camp && !left_up_crossing_piece)
+			{
+				bishop[i]->availbe.push_back(left_up);
+				if (board.board[left_up.x][left_up.y].pieceId != null)
+					left_up_crossing_piece = true;
+
+			}
+			else
+			{
+				left_up_crossing_piece = true;
+			}
+			if (islegalPosition(left_down) && board.board[left_down.x][left_down.y].camp != bishop[i]->camp && !left_down_crossing_piece)
+			{
+				bishop[i]->availbe.push_back(left_down);
+				if (board.board[left_down.x][left_down.y].pieceId != null)
+					left_down_crossing_piece = true;
+
+			}
+			else
+			{
+				left_down_crossing_piece = true;
+			}
+
+			if (islegalPosition(right_down) && board.board[right_down.x][right_down.y].camp != bishop[i]->camp && !right_down_crossing_piece)
+			{
+				bishop[i]->availbe.push_back(right_down);
+				if (board.board[right_down.x][right_down.y].pieceId != null)
+					right_down_crossing_piece = true;
+
+			}
+			else
+			{
+				right_down_crossing_piece = true;
+			}
+
+			if (islegalPosition(right_up) && board.board[right_up.x][right_up.y].camp != bishop[i]->camp && !right_up_crossing_piece)
+			{
+				bishop[i]->availbe.push_back(right_up);
+				if (board.board[right_up.x][right_up.y].pieceId != null)
+					right_up_crossing_piece = true;
+
+			}
+			else
+			{
+				right_up_crossing_piece = true;
+			}
+
+		}
+	}
 
 
 }
