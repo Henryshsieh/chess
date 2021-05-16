@@ -2,10 +2,10 @@
 #include "Player.h"
 #include <fstream>
 #include "Viewer.h"
-class GameManger
+class GameManager
 {
 public:
-	GameManger();
+	GameManager();
 	void run();
 	bool move(Board& board, Position&, Position&);
 	bool isGameOver();
@@ -18,7 +18,7 @@ private:
 	//Viewer viewer;
 	Board board;
 };
-void GameManger::run()
+void GameManager::run()
 {
 	while (true)
 	{
@@ -44,12 +44,12 @@ void GameManger::run()
 	}
 }
 
-GameManger::GameManger()
+GameManager::GameManager()
 {
 	board = Board();
 	//viewer = Viewer();
-	players[0] = Player(0,board);
-	players[1] = Player(1,board);
+	players[0] = Player(0, board);
+	players[1] = Player(1, board);
 	current_player = 0;
 	start.x = 0;
 	start.y = 0;
@@ -58,7 +58,7 @@ GameManger::GameManger()
 }
 
 
-bool GameManger::move(Board& board, Position& start, Position& end)
+bool GameManager::move(Board& board, Position& start, Position& end)
 {
 	piece backup_chosen = board.board[start.x][start.y];
 	piece& chosen = board.board[start.x][start.y];
@@ -89,16 +89,16 @@ bool GameManger::move(Board& board, Position& start, Position& end)
 }
 
 
-bool GameManger::isGameOver()
+bool GameManager::isGameOver()
 {
 	Board temp = board;
-	for (int i = 0 ; i < 2 ; i ++)
+	for (int i = 0; i < 2; i++)
 	{
 		if (!players[i].isThreatened(board, players[current_player].findKing(board)))
 			break;
-		for (int j = 0 ; j < BOARDLEN ; j++)
+		for (int j = 0; j < BOARDLEN; j++)
 		{
-			for (int k = 0 ; k < BOARDLEN ; k++)
+			for (int k = 0; k < BOARDLEN; k++)
 			{
 				if (board.board[j][k].camp == players[i].camp)
 				{

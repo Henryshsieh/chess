@@ -6,7 +6,7 @@ and may not be redistributed without written permission.*/
 
 int main()
 {
-	GameManger game;
+	GameManager game;
 	game.run();
 
 	return 0;
