@@ -20,12 +20,19 @@ private:
 };
 void GameManager::run()
 {
+	int count = 0;
 	while (true)
 	{
+		count++;
 		if (!isGameOver())
 		{
 			cout << "game over";
 			break;
+		}
+		cout << count << endl;
+		if (count == 10)
+		{
+			cout << "Asdfsafd";
 		}
 		if (current_player == 0)
 		{
@@ -66,9 +73,28 @@ bool GameManager::move(Board& board, Position& start, Position& end)
 	piece& destination = board.board[end.x][end.y];
 	if (chosen.camp == destination.camp || chosen.camp != current_player)//end cant be alley, start cant be enemy
 		return 0;
-	for (auto element : chosen.availbe)
+	for (auto element : chosen.availablemove)
 	{
 		if (end.x == element.x && end.y == element.y)
+		{
+			destination = chosen;
+			destination._position = end;
+			destination.moved = true;
+			chosen = piece();
+			players[0].setAvailablePath(board);
+			players[1].setAvailablePath(board);
+			if (players[current_player].isThreatened(board, players[current_player].findKing(board)))
+			{
+				cout << "protect the king!\n";
+				destination = backup_destination;
+				chosen = backup_chosen;
+				return 0;
+			}
+		}
+	}
+	for (auto element : chosen.attack)
+	{
+		if (end.x == element.x && end.y == element.y && destination.camp != NULL && destination.camp != current_player)
 		{
 			destination = chosen;
 			destination._position = end;
@@ -103,7 +129,7 @@ bool GameManager::isGameOver()
 			{
 				if (board.board[j][k].camp == players[i].camp)
 				{
-					for (auto element : board.board[j][k].availbe)
+					for (auto element : board.board[j][k].availablemove)
 					{
 						if (move(temp, temp.board[j][k]._position, element))
 						{

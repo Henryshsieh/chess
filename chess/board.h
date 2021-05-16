@@ -48,7 +48,8 @@ public:
 	int camp; // black side or white side; represented by 1 and 0
 	bool moved = 0;
 	Position _position;
-	vector <Position> availbe;
+	vector <Position> attack;
+	vector <Position> availablemove;
 
 };
 class Board
@@ -133,8 +134,8 @@ void Board::print(Position p)
 			temp[i][j] = board[i][j];
 			if (i == p.x && j == p.y)
 			{
-				vec.resize(board[i][j].availbe.size());
-				vec.assign(board[i][j].availbe.begin(), board[i][j].availbe.end());
+				vec.resize(board[i][j].availablemove.size());
+				vec.assign(board[i][j].availablemove.begin(), board[i][j].availablemove.end());
 			}
 		}
 	}

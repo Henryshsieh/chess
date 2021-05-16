@@ -168,7 +168,7 @@ void Player::setAvailablePath(Board& board)
 				if (board.board[i][j].pieceId == ROOK)
 				{
 					//rook
-					board.board[i][j].availbe = vector<Position>();
+					board.board[i][j].availablemove = vector<Position>();
 					Position p = board.board[i][j]._position;
 					Position up = p;
 					Position down = p;
@@ -187,7 +187,7 @@ void Player::setAvailablePath(Board& board)
 						right.y++;
 						if (islegalPosition(up) && board.board[up.x][up.y].camp != board.board[i][j].camp && !up_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(up);
+							board.board[i][j].availablemove.push_back(up);
 							if (board.board[up.x][up.y].pieceId != null)
 								up_crossing_piece = true;
 
@@ -198,7 +198,7 @@ void Player::setAvailablePath(Board& board)
 						}
 						if (islegalPosition(down) && board.board[down.x][down.y].camp != board.board[i][j].camp && !down_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(down);
+							board.board[i][j].availablemove.push_back(down);
 							if (board.board[down.x][down.y].pieceId != null)
 								down_crossing_piece = true;
 
@@ -210,7 +210,7 @@ void Player::setAvailablePath(Board& board)
 
 						if (islegalPosition(left) && board.board[left.x][left.y].camp != board.board[i][j].camp && !left_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(left);
+							board.board[i][j].availablemove.push_back(left);
 							if (board.board[left.x][left.y].pieceId != null)
 								left_crossing_piece = true;
 
@@ -222,7 +222,7 @@ void Player::setAvailablePath(Board& board)
 
 						if (islegalPosition(right) && board.board[right.x][right.y].camp != board.board[i][j].camp && !right_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(right);
+							board.board[i][j].availablemove.push_back(right);
 							if (board.board[right.x][right.y].pieceId != null)
 								right_crossing_piece = true;
 
@@ -235,7 +235,7 @@ void Player::setAvailablePath(Board& board)
 				}
 				else if (board.board[i][j].pieceId == PAWN)
 				{
-					board.board[i][j].availbe = vector<Position>();
+					board.board[i][j].availablemove = vector<Position>();
 					Position forward_position = board.board[i][j]._position;
 					forward_position.x = (camp == 0) ? forward_position.x - 1 : forward_position.x + 1;//determine where is front
 
@@ -245,16 +245,21 @@ void Player::setAvailablePath(Board& board)
 					right.y += 1;
 
 					if (islegalPosition(forward_position) && board.board[forward_position.x][forward_position.y].pieceId == null)
-						board.board[i][j].availbe.push_back(forward_position);
+						board.board[i][j].availablemove.push_back(forward_position);
 					if (islegalPosition(left) && board.board[left.x][left.y].camp != board.board[i][j].camp
-						&& board.board[left.x][left.y].pieceId != null)//isEnemy
+						)//isEnemy
 					{
-						board.board[i][j].availbe.push_back(left);
+						board.board[i][j].attack.push_back(left);
+						if(board.board[left.x][left.y].pieceId != null)
+							board.board[i][j].availablemove.push_back(left);
 					}
 					if (islegalPosition(right) && board.board[right.x][right.y].camp != board.board[i][j].camp
-						&& board.board[right.x][right.y].pieceId != null)//isEnemy
+						)//isEnemy
 					{
-						board.board[i][j].availbe.push_back(right);
+						board.board[i][j].attack.push_back(right);
+						if (board.board[right.x][right.y].pieceId != null)
+							board.board[i][j].availablemove.push_back(right);
+
 					}
 
 
@@ -266,12 +271,12 @@ void Player::setAvailablePath(Board& board)
 						if (islegalPosition(forward_position)
 							&& board.board[two_step.x][two_step.y].pieceId == null
 							&& board.board[forward_position.x][forward_position.y].pieceId == null)
-							board.board[i][j].availbe.push_back(two_step);
+							board.board[i][j].availablemove.push_back(two_step);
 					}
 				}
 				else if (board.board[i][j].pieceId == BISHOP)
 				{
-					board.board[i][j].availbe = vector<Position>();
+					board.board[i][j].availablemove = vector<Position>();
 					Position p = board.board[i][j]._position;
 					Position left_up = p;
 					Position left_down = p;
@@ -294,7 +299,7 @@ void Player::setAvailablePath(Board& board)
 						right_up.y++;
 						if (islegalPosition(left_up) && board.board[left_up.x][left_up.y].camp != board.board[i][j].camp && !left_up_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(left_up);
+							board.board[i][j].availablemove.push_back(left_up);
 							if (board.board[left_up.x][left_up.y].pieceId != null)
 								left_up_crossing_piece = true;
 
@@ -305,7 +310,7 @@ void Player::setAvailablePath(Board& board)
 						}
 						if (islegalPosition(left_down) && board.board[left_down.x][left_down.y].camp != board.board[i][j].camp && !left_down_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(left_down);
+							board.board[i][j].availablemove.push_back(left_down);
 							if (board.board[left_down.x][left_down.y].pieceId != null)
 								left_down_crossing_piece = true;
 
@@ -317,7 +322,7 @@ void Player::setAvailablePath(Board& board)
 
 						if (islegalPosition(right_down) && board.board[right_down.x][right_down.y].camp != board.board[i][j].camp && !right_down_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(right_down);
+							board.board[i][j].availablemove.push_back(right_down);
 							if (board.board[right_down.x][right_down.y].pieceId != null)
 								right_down_crossing_piece = true;
 
@@ -329,7 +334,7 @@ void Player::setAvailablePath(Board& board)
 
 						if (islegalPosition(right_up) && board.board[right_up.x][right_up.y].camp != board.board[i][j].camp && !right_up_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(right_up);
+							board.board[i][j].availablemove.push_back(right_up);
 							if (board.board[right_up.x][right_up.y].pieceId != null)
 								right_up_crossing_piece = true;
 
@@ -344,7 +349,7 @@ void Player::setAvailablePath(Board& board)
 				}
 				else if (board.board[i][j].pieceId == KNIGHT)
 				{
-					board.board[i][j].availbe = vector<Position>();
+					board.board[i][j].availablemove = vector<Position>();
 					Position p = board.board[i][j]._position;
 					Position p1;
 					Position p2;
@@ -363,7 +368,7 @@ void Player::setAvailablePath(Board& board)
 						check.y = p.y + p1.y;
 						if (islegalPosition(check) && board.board[check.x][check.y].camp != board.board[i][j].camp)
 						{
-							board.board[i][j].availbe.push_back(check);
+							board.board[i][j].availablemove.push_back(check);
 						}
 
 						//rotate
@@ -374,14 +379,14 @@ void Player::setAvailablePath(Board& board)
 						check.y = p.y + p2.y;
 						if (islegalPosition(check) && board.board[check.x][check.y].camp != board.board[i][j].camp)
 						{
-							board.board[i][j].availbe.push_back(check);
+							board.board[i][j].availablemove.push_back(check);
 						}
 					}
 
 				}
 				else if (board.board[i][j].pieceId == KING)
 				{
-					board.board[i][j].availbe = vector<Position>();
+					board.board[i][j].availablemove = vector<Position>();
 					Position p = board.board[i][j]._position;
 					Position p1;
 					Position p2;
@@ -402,7 +407,7 @@ void Player::setAvailablePath(Board& board)
 						check.y = p.y + p1.y;
 						if (islegalPosition(check) && board.board[check.x][check.y].camp != board.board[i][j].camp && !isThreatened(board, check))
 						{
-							board.board[i][j].availbe.push_back(check);
+							board.board[i][j].availablemove.push_back(check);
 						}
 
 						tmp = p2.x;
@@ -412,13 +417,13 @@ void Player::setAvailablePath(Board& board)
 						check.y = p.y + p2.y;
 						if (islegalPosition(check) && board.board[check.x][check.y].camp != board.board[i][j].camp && !isThreatened(board, check))
 						{
-							board.board[i][j].availbe.push_back(check);
+							board.board[i][j].availablemove.push_back(check);
 						}
 					}
 				}
 				else if (board.board[i][j].pieceId == QUEEN)
 				{
-					board.board[i][j].availbe = vector<Position>();
+					board.board[i][j].availablemove = vector<Position>();
 					Position p = board.board[i][j]._position;
 					Position up = p;
 					Position down = p;
@@ -451,7 +456,7 @@ void Player::setAvailablePath(Board& board)
 						right_up.y++;
 						if (islegalPosition(left_up) && board.board[left_up.x][left_up.y].camp != board.board[i][j].camp && !left_up_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(left_up);
+							board.board[i][j].availablemove.push_back(left_up);
 							if (board.board[left_up.x][left_up.y].pieceId != null)
 								left_up_crossing_piece = true;
 
@@ -462,7 +467,7 @@ void Player::setAvailablePath(Board& board)
 						}
 						if (islegalPosition(left_down) && board.board[left_down.x][left_down.y].camp != board.board[i][j].camp && !left_down_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(left_down);
+							board.board[i][j].availablemove.push_back(left_down);
 							if (board.board[left_down.x][left_down.y].pieceId != null)
 								left_down_crossing_piece = true;
 
@@ -474,7 +479,7 @@ void Player::setAvailablePath(Board& board)
 
 						if (islegalPosition(right_down) && board.board[right_down.x][right_down.y].camp != board.board[i][j].camp && !right_down_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(right_down);
+							board.board[i][j].availablemove.push_back(right_down);
 							if (board.board[right_down.x][right_down.y].pieceId != null)
 								right_down_crossing_piece = true;
 
@@ -486,7 +491,7 @@ void Player::setAvailablePath(Board& board)
 
 						if (islegalPosition(right_up) && board.board[right_up.x][right_up.y].camp != board.board[i][j].camp && !right_up_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(right_up);
+							board.board[i][j].availablemove.push_back(right_up);
 							if (board.board[right_up.x][right_up.y].pieceId != null)
 								right_up_crossing_piece = true;
 
@@ -504,7 +509,7 @@ void Player::setAvailablePath(Board& board)
 						right.y++;
 						if (islegalPosition(up) && board.board[up.x][up.y].camp != board.board[i][j].camp && !up_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(up);
+							board.board[i][j].availablemove.push_back(up);
 							if (board.board[up.x][up.y].pieceId != null)
 								up_crossing_piece = true;
 
@@ -515,7 +520,7 @@ void Player::setAvailablePath(Board& board)
 						}
 						if (islegalPosition(down) && board.board[down.x][down.y].camp != board.board[i][j].camp && !down_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(down);
+							board.board[i][j].availablemove.push_back(down);
 							if (board.board[down.x][down.y].pieceId != null)
 								down_crossing_piece = true;
 
@@ -527,7 +532,7 @@ void Player::setAvailablePath(Board& board)
 
 						if (islegalPosition(left) && board.board[left.x][left.y].camp != board.board[i][j].camp && !left_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(left);
+							board.board[i][j].availablemove.push_back(left);
 							if (board.board[left.x][left.y].pieceId != null)
 								left_crossing_piece = true;
 
@@ -539,7 +544,7 @@ void Player::setAvailablePath(Board& board)
 
 						if (islegalPosition(right) && board.board[right.x][right.y].camp != board.board[i][j].camp && !right_crossing_piece)
 						{
-							board.board[i][j].availbe.push_back(right);
+							board.board[i][j].availablemove.push_back(right);
 							if (board.board[right.x][right.y].pieceId != null)
 								right_crossing_piece = true;
 
@@ -576,13 +581,25 @@ bool Player::isThreatened(Board& board, Position king)
 	{
 		for (int j = 0 ; j < BOARDLEN ; j++)
 		{
-			if (board.board[i][j].camp != board.board[king.x][king.y].camp)
+			if (board.board[i][j].camp != camp)
 			{
-				for (auto element : board.board[i][j].availbe)
+				if (board.board[i][j].pieceId == PAWN)
 				{
-					if (element.x == king.x && element.y == king.y)
-						return 1;
+					for (auto element : board.board[i][j].attack)
+					{
+						if (element.x == king.x && element.y == king.y)
+							return 1;
+					}
 				}
+				else
+				{
+					for (auto element : board.board[i][j].availablemove)
+					{
+						if (element.x == king.x && element.y == king.y)
+							return 1;
+					}
+				}
+				
 			}
 		}
 	}
