@@ -108,8 +108,6 @@ void Board::print()
 		cout << endl;
 	}
 }
-
-
 void Board::save()
 {
 	fstream str;

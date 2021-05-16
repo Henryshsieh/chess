@@ -9,14 +9,13 @@ public:
 	void run();
 	bool move(Board& board, Position&, Position&);
 	bool isGameOver();
-	void refresh();//refresh players' member status
 	Position start;
 	Position end;
 
 private:
 	Player players[2];
 	int current_player;
-	Viewer viewer;
+	//Viewer viewer;
 	Board board;
 };
 void GameManger::run()
@@ -41,7 +40,6 @@ void GameManger::run()
 				current_player = 0;
 
 		}
-		refresh();//refresh players' member status
 		board.save();
 	}
 }
@@ -49,7 +47,7 @@ void GameManger::run()
 GameManger::GameManger()
 {
 	board = Board();
-	viewer = Viewer();
+	//viewer = Viewer();
 	players[0] = Player(0,board);
 	players[1] = Player(1,board);
 	current_player = 0;
@@ -75,79 +73,28 @@ bool GameManger::move(Board& board, Position& start, Position& end)
 			destination = chosen;
 			destination._position = end;
 			chosen = piece();
-			refresh();
-			if (players[current_player].isThreatened(board, players[current_player].king->_position))
+			players[0].setAvailablePath(board);
+			players[1].setAvailablePath(board);
+			if (players[current_player].isThreatened(board, players[current_player].findKing(board)))
 			{
 				cout << "protect the king!\n";
 				destination = backup_destination;
 				chosen = backup_chosen;
 				return 0;
 			}
-			else
-			{
-				switch (destination.pieceId)
-				{
-				case KING:
-					players[current_player].king = &destination;
-					return 1;
-				case KNIGHT:
-					players[current_player].knight[destination.pieceIndex] = &destination;
-					return 1;
-				case QUEEN:
-					players[current_player].queen = &destination;
-					return 1;
-				case ROOK:
-					players[current_player].rook[destination.pieceIndex] = &destination;
-					return 1;
-				case BISHOP:
-					players[current_player].bishop[destination.pieceIndex] = &destination;
-					return 1;
-				case PAWN:
-					players[current_player].pawn[destination.pieceIndex] = &destination;
-					return 1;
-				default:
-					break;
-				}
-			}
 		}
 	}
-	return 0;
+	board.print();
+	return 1;
 }
 
-
-void GameManger::refresh()
-{
-	for (int index = 0 ; index < 2 ; index ++)
-	{
-		players[index].setAvailablePath(board);
-		if (players[index].king != NULL && players[index].king->camp != players[index].camp)
-			players[index].king = NULL;
-		if (players[index].queen != NULL && players[index].queen->camp != players[index].camp)
-		for (int i = 0; i < 2; i++)
-		{
-			if (players[index].bishop != NULL && players[index].bishop[i]->camp != players[index].camp)
-				players[index].bishop[i] = NULL;
-			if (players[index].knight[i] != NULL && players[index].knight[i]->camp != players[index].camp)
-				players[index].knight[i] = NULL;
-			if (players[index].rook[i]->camp != players[index].camp)
-				players[index].rook[i] = NULL;
-		}
-		for (int i = 0; i < 8; i++)
-		{
-			if (players[index].pawn[i] != NULL && players[index].pawn[i]->camp != players[index].camp)
-				players[index].pawn[i] = NULL;
-		}
-
-	}
-	
-}
 
 bool GameManger::isGameOver()
 {
 	Board temp = board;
 	for (int i = 0 ; i < 2 ; i ++)
 	{
-		if (!players[i].isThreatened(board, players[i].king->_position))
+		if (!players[i].isThreatened(board, players[current_player].findKing(board)))
 			break;
 		for (int j = 0 ; j < BOARDLEN ; j++)
 		{
@@ -159,7 +106,7 @@ bool GameManger::isGameOver()
 					{
 						if (move(temp, temp.board[j][k]._position, element))
 						{
-							if (!players[i].isThreatened(temp, players[i].king->_position))
+							if (!players[i].isThreatened(temp, players[current_player].findKing(board)))
 								return 0;
 							temp = board;
 						}
