@@ -20,6 +20,7 @@ private:
 	int current_player;
 	Board board;
 	Viewer viewer;
+	int count;
 	
 
 
@@ -39,6 +40,12 @@ void GameManager::ProcessInput()
 	{
 		if (event.mouseButton.button == sf::Mouse::Left)
 		{
+			cout << count++<<endl;
+			if (count >= 15)
+			{
+				cout <<"a";
+
+			}
 			p.y = event.mouseButton.x / 112.5f;
 			p.x = event.mouseButton.y / 112.5f;
 			if (!check)
@@ -91,6 +98,8 @@ int GameManager::run()
 GameManager::GameManager()
 {
 	check = 0;
+
+	count = 0;
 	board = Board();
 	//viewer = Viewer();
 	players[0] = Player(0, board);

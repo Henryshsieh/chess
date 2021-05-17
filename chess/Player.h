@@ -86,6 +86,7 @@ bool Player::OnMove(Board& board, Position& start, Position& end)
 		}
 	}
 	board.print();
+
 	return 0;
 }
 
@@ -100,6 +101,7 @@ void Player::setAvailablePath(Board& board)
 			if (1)
 			{
 				board.board[i][j].availablemove = vector<Position>();
+				board.board[i][j].attack = vector<Position>();
 				if (board.board[i][j].pieceId == ROOK)
 				{
 					//rook

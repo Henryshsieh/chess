@@ -2,7 +2,6 @@
 class Viewer
 {
 public:
-	void drawTarget();
 	void movePicture(Board&);
 	void movePicture(Board&, Position, Player);
 	void Display();
@@ -170,16 +169,11 @@ void Viewer::Display()
 		window.draw(white_pawn[i]);
 		window.draw(black_pawn[i]);
 	}
-	drawTarget();
-	window.display();
-}
-void Viewer::drawTarget()
-{
 	for (int i = 0; i < 64; i++)
 	{
 		window.draw(target[i]);
 	}
-
+	window.display();
 }
 
 
@@ -190,6 +184,7 @@ void Viewer::movePicture(Board& board, Position p, Player player)
 	int used[64];
 	for (int i = 0; i < 64; i++)
 	{
+		target[index].setTexture(transparent);
 		used[i] = 0;
 	}
 	for (int i = 0; i < BOARDLEN; i++)
@@ -200,6 +195,7 @@ void Viewer::movePicture(Board& board, Position p, Player player)
 			{
 				if (i == element.x && j == element.y && board.board[i][j].camp != player.camp && board.board[i][j].pieceId != null)
 				{
+					target[index].setTexture(target_texture);
 					target[index].setPosition(j * 112.5f, i * 112.5f);
 					if (board.board[p.x][p.y].camp != player.camp)
 						target[index].setColor(sf::Color::Red);
@@ -207,7 +203,6 @@ void Viewer::movePicture(Board& board, Position p, Player player)
 					{
 						target[index].setColor(sf::Color::Black);
 					}
-					target[index];
 					used[index++] = true;
 					cout << endl << i << j << endl;
 				}
@@ -217,6 +212,7 @@ void Viewer::movePicture(Board& board, Position p, Player player)
 
 				if (i == element.x && j == element.y)
 				{
+					target[index].setTexture(target_texture);
 					if (board.board[p.x][p.y].camp != player.camp)
 						target[index].setColor(sf::Color::Red);
 					else
@@ -278,18 +274,6 @@ void Viewer::movePicture(Board& board, Position p, Player player)
 			{
 				black_queen.setPosition(j * 112.5f, i * 112.5f);
 			}
-		}
-	}
-	for (int i = 0; i < 64; i++)
-	{
-		if (!used[i])
-		{
-			target[i].setTexture(transparent);
-		}
-		else
-		{
-			target[i].setTexture(target_texture);
-
 		}
 	}
 	
