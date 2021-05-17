@@ -89,6 +89,7 @@ bool Player::OnMove(Board& board, Position& start, Position& end)
 void Player::setAvailablePath(Board& board)
 {
 	//rook
+	Position king_p = findKing(board);
 	for (int i = 0; i < BOARDLEN; i++)
 	{
 		for (int j = 0; j < BOARDLEN; j++)
@@ -198,7 +199,7 @@ void Player::setAvailablePath(Board& board)
 					two_step.x = (camp == 0) ? forward_position.x - 1 : forward_position.x + 1;
 					if (!board.board[i][j].moved)
 					{
-						if (islegalPosition(forward_position)
+						if (islegalPosition(two_step)
 							&& board.board[two_step.x][two_step.y].pieceId == null
 							&& board.board[forward_position.x][forward_position.y].pieceId == null)
 							board.board[i][j].availablemove.push_back(two_step);

@@ -112,16 +112,13 @@ bool GameManager::isGameOver()
 		{
 			for (int k = 0; k < BOARDLEN; k++)
 			{
-				if (board.board[j][k].camp == players[i].camp)
+				for (auto element : board.board[j][k].availablemove)
 				{
-					for (auto element : board.board[j][k].availablemove)
+					if (players[current_player].OnMove(temp, temp.board[j][k]._position, element))
 					{
-						if (players[current_player].OnMove(temp, temp.board[j][k]._position, element))
-						{
-							if (!players[i].isThreatened(temp, players[i].findKing(board)))
-								return 0;
-							temp = board;
-						}
+						if (!players[i].isThreatened(temp, players[i].findKing(board)))
+							return 0;
+						temp = board;
 					}
 				}
 			}
