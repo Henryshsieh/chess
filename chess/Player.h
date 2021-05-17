@@ -16,8 +16,6 @@ public:
 	bool OnMove(Board&, Position&, Position&);
 	void OnPromote(Board& const board, Position& const pawnPos/*, PieceType& outType*/);
 		// queen, rook, bishop or knight
-	void chooseStart(Board&, Position&, Position&);
-	void chooseEnd(Board&, Position&, Position&);
 	bool islegalPosition(Position);
 	Position findKing(Board&);
 	bool isThreatened(Board&, Position);
