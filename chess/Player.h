@@ -12,17 +12,15 @@ class Player
 {
 public:
 	Player();
-	void OnPromote(Board& board);
 	Player(int, Board&);
 	bool OnMove(Board&, Position&, Position&);
-		// queen, rook, bishop or knight
+	void OnPromote(Board& board);
 	bool islegalPosition(Position);
 	Position findKing(Board&);
 	bool isThreatened(Board&, Position);
 	void setAvailablePath(Board&);
 	int camp;
 };
-
 
 Player::Player()
 {
@@ -33,7 +31,7 @@ Player::Player(int c, Board& board)
 
 	camp = c;
 	setAvailablePath(board);
-	
+
 }
 bool Player::OnMove(Board& board, Position& start, Position& end)
 {
@@ -43,7 +41,7 @@ bool Player::OnMove(Board& board, Position& start, Position& end)
 	piece& chosen = board.board[start.x][start.y];
 	piece backup_destination = board.board[end.x][end.y];
 	piece& destination = board.board[end.x][end.y];
-	
+
 	if (camp == destination.camp || chosen.camp != camp || (start.x == end.x && start.y == end.y))//end cant be alley, start cant be enemy
 		return 0;
 	for (auto element : chosen.availablemove)
@@ -91,11 +89,10 @@ bool Player::OnMove(Board& board, Position& start, Position& end)
 
 	return 0;
 }
-
 void Player::OnPromote(Board& board)
 {
 	int side = (camp == 0) ? 0 : 7;
-	for (int i = 0 ; i < BOARDLEN ;i++)
+	for (int i = 0; i < BOARDLEN; i++)
 	{
 		if (board.board[side][i].pieceId == 6) {
 			char promoteType;
@@ -130,7 +127,7 @@ void Player::OnPromote(Board& board)
 			board.print(board.board[side][i]._position);
 		}
 	}
-	
+
 }
 void Player::setAvailablePath(Board& board)
 {
@@ -147,7 +144,7 @@ void Player::setAvailablePath(Board& board)
 				if (board.board[i][j].pieceId == ROOK)
 				{
 					//rook
-					
+
 					Position p = board.board[i][j]._position;
 					Position up = p;
 					Position down = p;
@@ -214,7 +211,7 @@ void Player::setAvailablePath(Board& board)
 				}
 				else if (board.board[i][j].pieceId == PAWN)
 				{
-					
+
 					Position forward_position = board.board[i][j]._position;
 					forward_position.x = (board.board[i][j].camp == 0) ? forward_position.x - 1 : forward_position.x + 1;//determine where is front
 
@@ -229,7 +226,7 @@ void Player::setAvailablePath(Board& board)
 						)//isEnemy
 					{
 						board.board[i][j].attack.push_back(left);
-						if(board.board[left.x][left.y].pieceId != null)
+						if (board.board[left.x][left.y].pieceId != null)
 							board.board[i][j].availablemove.push_back(left);
 					}
 					if (islegalPosition(right) && board.board[right.x][right.y].camp != board.board[i][j].camp
@@ -255,7 +252,7 @@ void Player::setAvailablePath(Board& board)
 				}
 				else if (board.board[i][j].pieceId == BISHOP)
 				{
-					
+
 					Position p = board.board[i][j]._position;
 					Position left_up = p;
 					Position left_down = p;
@@ -328,7 +325,7 @@ void Player::setAvailablePath(Board& board)
 				}
 				else if (board.board[i][j].pieceId == KNIGHT)
 				{
-					
+
 					Position p = board.board[i][j]._position;
 					Position p1;
 					Position p2;
@@ -365,7 +362,7 @@ void Player::setAvailablePath(Board& board)
 				}
 				else if (board.board[i][j].pieceId == KING)
 				{
-					
+
 					Position p = board.board[i][j]._position;
 					Position p1;
 					Position p2;
@@ -402,7 +399,7 @@ void Player::setAvailablePath(Board& board)
 				}
 				else if (board.board[i][j].pieceId == QUEEN)
 				{
-					
+
 					Position p = board.board[i][j]._position;
 					Position up = p;
 					Position down = p;
@@ -536,7 +533,7 @@ void Player::setAvailablePath(Board& board)
 					}
 				}
 			}
-				
+
 		}
 	}
 	//knight
@@ -556,9 +553,9 @@ bool Player::islegalPosition(Position p)
 }
 bool Player::isThreatened(Board& board, Position king)
 {
-	for (int i = 0 ; i < BOARDLEN ; i++)
+	for (int i = 0; i < BOARDLEN; i++)
 	{
-		for (int j = 0 ; j < BOARDLEN ; j++)
+		for (int j = 0; j < BOARDLEN; j++)
 		{
 			if (board.board[i][j].camp != camp)
 			{
@@ -578,7 +575,7 @@ bool Player::isThreatened(Board& board, Position king)
 							return 1;
 					}
 				}
-				
+
 			}
 		}
 	}
