@@ -7,5 +7,4 @@ int main()
 	GameManager game;
 	game.run();
 	return EXIT_SUCCESS;
-
 }

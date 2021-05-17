@@ -48,10 +48,11 @@ private:
 	sf::Sprite white_queen;
 	sf::Sprite black_queen;
 };
+
 void Viewer::showcheck()
 {
 	check.setPosition(0, 400);
-	for (int i = 0 ; i < 8000;i++)
+	for (int i = 0; i < 8000; i++)
 	{
 		check.move(0.1, 0);
 		window.draw(check);
@@ -59,6 +60,7 @@ void Viewer::showcheck()
 		//Display();
 	}
 }
+
 Viewer::Viewer()
 {
 	window.create(sf::VideoMode(900, 900), "SFML Window");
@@ -104,7 +106,7 @@ Viewer::Viewer()
 		std::cout << "Error loading file" << std::endl;
 
 
-	check= sf::Sprite(checktexture);
+	check = sf::Sprite(checktexture);
 	white_rook[0] = sf::Sprite(whiterook_texture);
 	white_rook[1] = sf::Sprite(whiterook_texture);
 
@@ -127,7 +129,7 @@ Viewer::Viewer()
 	white_king = sf::Sprite(whiteking_texture);
 
 	black_king = sf::Sprite(blackking_texture);
-	
+
 	white_queen = sf::Sprite(whitequeen_texture);
 
 	black_queen = sf::Sprite(blackqueen_texture);
@@ -148,8 +150,8 @@ Viewer::Viewer()
 void Viewer::Display()
 {
 	window.draw(sprite);
-	
-	
+
+
 	window.draw(white_rook[0]);
 	window.draw(white_rook[1]);
 	window.draw(black_rook[0]);
@@ -177,7 +179,6 @@ void Viewer::Display()
 	}
 	window.display();
 }
-
 
 void Viewer::movePicture(Board& board, Position p, Player player)
 {
@@ -278,9 +279,8 @@ void Viewer::movePicture(Board& board, Position p, Player player)
 			}
 		}
 	}
-	
-}
 
+}
 
 void Viewer::movePicture(Board& board)
 {

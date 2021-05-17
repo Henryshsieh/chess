@@ -8,7 +8,7 @@
 #include <SFML/Graphics.hpp>
 using namespace std;
 
-class Player
+class Player // process players' actions
 {
 public:
 	Player();
@@ -17,21 +17,20 @@ public:
 	void OnPromote(Board& board);
 	bool islegalPosition(Position);
 	Position findKing(Board&);
-	int camp;
+	int camp; // black side or white side; represented by 1 and 0 respectively
 };
 
-Player::Player()
+Player::Player() // default constructor
 {
 	camp = 0;
 }
-Player::Player(int c, Board& board)
-{
 
+Player::Player(int c, Board& board) // constructor
+{
 	camp = c;
-	
-	
 }
-bool Player::OnMove(Board& board, Position& start, Position& end)
+
+bool Player::OnMove(Board& board, Position& start, Position& end) // to move chess pieces
 {
 	if (!islegalPosition(start) || !islegalPosition(end))
 		return 0;
@@ -39,7 +38,7 @@ bool Player::OnMove(Board& board, Position& start, Position& end)
 	piece& chosen = board.board[start.x][start.y];
 	piece backup_destination = board.board[end.x][end.y];
 	piece& destination = board.board[end.x][end.y];
-	
+
 	if (destination.camp == chosen.camp && (destination.pieceId == ROOK && chosen.pieceId == KING) && chosen.camp == camp)
 	{
 		piece tmp = chosen;
@@ -99,7 +98,8 @@ bool Player::OnMove(Board& board, Position& start, Position& end)
 
 	return 0;
 }
-void Player::OnPromote(Board& board)
+
+void Player::OnPromote(Board& board) // promote pawns
 {
 	int side = (camp == 0) ? 0 : 7;
 	for (int i = 0; i < BOARDLEN; i++)
@@ -142,10 +142,10 @@ void Player::OnPromote(Board& board)
 			board.print(board.board[side][i]._position);
 		}
 	}
-	
+
 }
 
-bool Player::islegalPosition(Position p)
+bool Player::islegalPosition(Position p) // check if the chosen position is available
 {
 	if (p.x >= 0 && p.x < BOARDLEN && p.y >= 0 && p.y < BOARDLEN)
 	{
@@ -153,7 +153,8 @@ bool Player::islegalPosition(Position p)
 	}
 	return 0;
 }
-Position Player::findKing(Board& board)
+
+Position Player::findKing(Board& board) // find where the king is
 {
 	Position king;
 	for (int i = 0; i < BOARDLEN; i++)

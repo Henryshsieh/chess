@@ -7,21 +7,21 @@
 #define BOARDLEN 8
 using namespace std;
 
-struct Position {
+struct Position { // the position of each piece
 public:
-	Position():x(0),y(0){}
-	Position(int _x, int _y):x(_x), y(_y){}
+	Position() :x(0), y(0) {}
+	Position(int _x, int _y) :x(_x), y(_y) {}
 	Position& operator =(Position rhs)
 	{
 		x = rhs.x;
 		y = rhs.y;
 		return *this;
 	}
-	int x; // X, y Coordinate.
+	int x; // x, y coordinate
 	int y;
 };
 
-enum mynum
+enum mynum // types of chess pieces
 {
 	null = 0,
 	KING = 1,
@@ -32,11 +32,11 @@ enum mynum
 	PAWN = 6,
 };
 
-class piece
+class piece // information regarding chess pieces
 {
 public:
 	piece() :pieceId(null), camp(-999), pieceIndex(0), moved(0) {}
-	piece(int id, int inx, int c, int x, int y) :pieceId(id), pieceIndex(inx), camp(c), moved(0) ,promotePiece(0)
+	piece(int id, int inx, int c, int x, int y) :pieceId(id), pieceIndex(inx), camp(c), moved(0), promotePiece(0)
 	{
 		_position.x = x;
 		_position.y = y;
@@ -52,7 +52,7 @@ public:
 	int pieceId; // types of chess pieces
 	int pieceIndex; // to distinguish pieces of same type
 	int promotePiece;
-	int camp; // black side or white side; represented by 1 and 0
+	int camp; // black side or white side; represented by 1 and 0 respectively
 	bool moved = 0;
 	piece& operator=(piece rhs)
 	{
@@ -67,12 +67,11 @@ public:
 	Position _position;
 	vector <Position> attack;
 	vector <Position> availablemove;
-
 };
+
 class Board
 {
 public:
-	//declare chess 
 	piece board[BOARDLEN][BOARDLEN];
 	void setAvailablePath();
 	void print();
@@ -81,7 +80,7 @@ public:
 	void print(Position);
 	Board& operator = (Board rhs)
 	{
-		for (int i = 0 ; i < BOARDLEN ; i++)
+		for (int i = 0; i < BOARDLEN; i++)
 		{
 			for (int j = 0; j < BOARDLEN; j++)
 			{
@@ -91,10 +90,9 @@ public:
 		return *this;
 	}
 	Board();
-protected:
-private:
 };
-Board::Board()
+
+Board::Board() // constructor
 {
 	for (int i = 0; i < BOARDLEN; i++)
 	{
@@ -128,7 +126,8 @@ Board::Board()
 	}
 	setAvailablePath();
 }
-bool Board::islegalPosition(Position p)
+
+bool Board::islegalPosition(Position p) // check if the chosen position is available
 {
 	if (p.x >= 0 && p.x < BOARDLEN && p.y >= 0 && p.y < BOARDLEN)
 	{
@@ -136,7 +135,8 @@ bool Board::islegalPosition(Position p)
 	}
 	return 0;
 }
-void Board::print()
+
+void Board::print() // print the board
 {
 	for (int i = 0; i < BOARDLEN; i++)
 	{
@@ -147,7 +147,8 @@ void Board::print()
 		cout << endl;
 	}
 }
-void Board::print(Position p)
+
+void Board::print(Position p) // print the board
 {
 	piece temp[BOARDLEN][BOARDLEN];
 	vector<Position> vec;
@@ -174,8 +175,8 @@ void Board::print(Position p)
 				cout << setw(2) << "X";
 				check = 1;
 			}
-			else if(vec.size())
-				for (auto element:vec)
+			else if (vec.size())
+				for (auto element : vec)
 				{
 					if (i == element.x && j == element.y)
 					{
@@ -183,17 +184,18 @@ void Board::print(Position p)
 						check = 1;
 					}
 				}
-			if(!check)
+			if (!check)
 			{
 				cout << setw(2) << board[i][j];
 			}
-			
+
 		}
 		cout << endl;
 	}
 	cout << endl;
 }
-void Board::setAvailablePath()
+
+void Board::setAvailablePath() // set available paths
 {
 	//rook
 	for (int i = 0; i < BOARDLEN; i++)
@@ -456,12 +458,12 @@ void Board::setAvailablePath()
 								{
 									if (element.x - p.x == 0 && !moveHorizontal)
 									{
-										if (isThreatened( element, board[p.x][p.y].camp))
+										if (isThreatened(element, board[p.x][p.y].camp))
 											moveHorizontal = 1;
 									}
 									else if (element.y == p.y && !moveVertical)
 									{
-										if (isThreatened( element, board[p.x][p.y].camp))
+										if (isThreatened(element, board[p.x][p.y].camp))
 											moveHorizontal = 1;
 									}
 								}
@@ -480,7 +482,7 @@ void Board::setAvailablePath()
 						p1.y = -tmp;
 						check.x = p.x + p1.x;
 						check.y = p.y + p1.y;
-						if (islegalPosition(check) && board[check.x][check.y].camp != board[i][j].camp && !isThreatened( check, board[p.x][p.y].camp))
+						if (islegalPosition(check) && board[check.x][check.y].camp != board[i][j].camp && !isThreatened(check, board[p.x][p.y].camp))
 						{
 							board[i][j].availablemove.push_back(check);
 						}
@@ -490,7 +492,7 @@ void Board::setAvailablePath()
 						p2.y = -tmp;
 						check.x = p.x + p2.x;
 						check.y = p.y + p2.y;
-						if (islegalPosition(check) && board[check.x][check.y].camp != board[i][j].camp && !isThreatened( check, board[p.x][p.y].camp))
+						if (islegalPosition(check) && board[check.x][check.y].camp != board[i][j].camp && !isThreatened(check, board[p.x][p.y].camp))
 						{
 							board[i][j].availablemove.push_back(check);
 						}
@@ -642,7 +644,8 @@ void Board::setAvailablePath()
 	//-1 0
 	//y , -x
 }
-bool Board::isThreatened(Position king, int camp)
+
+bool Board::isThreatened(Position king, int camp) // see if "check" occurs, that is, if the king is threatened
 {
 	for (int i = 0; i < BOARDLEN; i++)
 	{
@@ -659,7 +662,7 @@ bool Board::isThreatened(Position king, int camp)
 							cout << board[king.x][king.y].camp << " king threatened from" << board[i][j] << "      " << i << " " << j << endl;
 							print(element);
 							return 1;
-							
+
 						}
 					}
 				}

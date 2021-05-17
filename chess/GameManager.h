@@ -4,7 +4,7 @@
 #include "Viewer.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
-class GameManager
+class GameManager // control the entire game
 {
 public:
 	GameManager();
@@ -12,7 +12,7 @@ public:
 	bool isGameOver(Player);
 	bool isTie();
 	void ProcessInput();
-	
+
 	Position start;
 	Position end;
 private:
@@ -23,16 +23,71 @@ private:
 	Board board;
 	Viewer viewer;
 	int count;
-	
-
-
 };
 
-bool GameManager::isTie()
+GameManager::GameManager() // constructor
 {
-	for (int i = 0 ; i < BOARDLEN ; i ++)
+	check = 0;
+	t = 0;
+	count = 0;
+	board = Board();
+	//viewer = Viewer();
+	players[0] = Player(0, board);
+	players[1] = Player(1, board);
+	current_player = 0;
+	start.x = 0;
+	start.y = 0;
+	end.x = 0;
+	end.y = 0;
+}
+
+int GameManager::run() // drive all major events
+{
+	bool check = 0;
+	while (1)
 	{
-		for (int j = 0 ; j < BOARDLEN ; j++)
+		while (viewer.window.isOpen()) {
+			ProcessInput();
+			viewer.Display();
+		}
+	}
+	return 0;
+}
+
+bool GameManager::isGameOver(Player player) // check if the game is over
+{
+	Board temp = board;
+
+	if (!board.isThreatened(player.findKing(board), player.camp))
+		return 0;
+	for (int j = 0; j < BOARDLEN; j++)
+	{
+		for (int k = 0; k < BOARDLEN; k++)
+		{
+			if (board.board[j][k].camp == player.camp)
+			{
+				for (auto element : board.board[j][k].availablemove)
+				{
+					cout << "               " << j << k << " " << element.x << element.y << endl;
+					if (player.OnMove(temp, temp.board[j][k]._position, element))
+					{
+						return 0;
+						temp = board;
+					}
+				}
+			}
+		}
+	}
+	cout << "player " << player.camp << " lose";
+	return 1;
+
+}
+
+bool GameManager::isTie() // check if draw occurs
+{
+	for (int i = 0; i < BOARDLEN; i++)
+	{
+		for (int j = 0; j < BOARDLEN; j++)
 		{
 			if (board.board[i][j].pieceId != KING && board.board[i][j].pieceId != null)
 				return 0;
@@ -42,7 +97,7 @@ bool GameManager::isTie()
 	return 1;
 }
 
-void GameManager::ProcessInput()
+void GameManager::ProcessInput() // read input from mouse
 {
 	sf::Event event;
 	Position p;
@@ -52,10 +107,9 @@ void GameManager::ProcessInput()
 		{
 			viewer.window.close();
 			exit(0);
-
 		}
 	}
-	
+
 	if (event.type == sf::Event::MouseButtonReleased)
 	{
 		if (event.mouseButton.button == sf::Mouse::Left)
@@ -87,7 +141,7 @@ void GameManager::ProcessInput()
 
 					}
 				}
-					
+
 				board.print(start);
 				viewer.movePicture(board, start, players[current_player]);
 			}
@@ -120,12 +174,12 @@ void GameManager::ProcessInput()
 
 		if (event.mouseButton.button == sf::Mouse::Right)
 		{
-			cout << " player "<< current_player << " surrounded\n";
+			cout << " player " << current_player << " surrounded\n";
 			exit(0);
 		}
 	}
 	t++;
-	cout <<"left " <<5000/100 - (double)t / 100  << "seconds"<< endl;
+	cout << "left " << 5000 / 100 - (double)t / 100 << "seconds" << endl;
 	if (t == 5000)
 	{
 		cout << " player " << current_player << " lose\n";
@@ -133,72 +187,3 @@ void GameManager::ProcessInput()
 		exit(0);
 	}
 }
-
-
-int GameManager::run()
-{
-		
-	bool check = 0;
-	while (1)
-	{
-		while (viewer.window.isOpen()) {
-
-			ProcessInput();
-			viewer.Display();
-		}
-
-
-	}
-	return 0;
-}
-
-GameManager::GameManager()
-{
-	check = 0;
-	t = 0;
-	count = 0;
-	board = Board();
-	//viewer = Viewer();
-	players[0] = Player(0, board);
-	players[1] = Player(1, board);
-	current_player = 0;
-	start.x = 0;
-	start.y = 0;
-	end.x = 0;
-	end.y = 0;
-
-	
-}
-
-
-
-
-bool GameManager::isGameOver(Player player)
-{
-	Board temp = board;
-
-	if (!board.isThreatened( player.findKing(board), player.camp))
-		return 0;
-	for (int j = 0; j < BOARDLEN; j++)
-	{
-		for (int k = 0; k < BOARDLEN; k++)
-		{
-			if (board.board[j][k].camp == player.camp)
-			{
-				for (auto element : board.board[j][k].availablemove)
-				{
-					cout << "               " << j << k << " " << element.x << element.y << endl;
-					if (player.OnMove(temp, temp.board[j][k]._position, element))
-					{
-						return 0;
-						temp = board;
-					}
-				}
-			}
-		}
-	}
-	cout << "player " << player.camp << " lose";
-	return 1;
-
-}
- 
