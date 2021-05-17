@@ -164,7 +164,7 @@ bool GameManager::isGameOver(Player player)
 				{
 					if (player.OnMove(temp, temp.board[j][k]._position, element))
 					{
-						temp.print();
+						return 0;
 						temp = board;
 					}
 				}
