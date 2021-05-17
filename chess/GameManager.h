@@ -59,12 +59,6 @@ void GameManager::ProcessInput()
 	{
 		if (event.mouseButton.button == sf::Mouse::Left)
 		{
-			cout << count++<<endl;
-			if (count >= 15)
-			{
-				cout <<"a";
-
-			}
 			p.y = event.mouseButton.x / 112.5f;
 			p.x = event.mouseButton.y / 112.5f;
 			if (!check)
@@ -85,7 +79,7 @@ void GameManager::ProcessInput()
 					players[current_player].OnPromote(board);
 					cout << "from" << start.x << " " << start.y << " to" << end.x << " " << end.y << endl;
 					current_player ^= 1;
-					if (players[current_player].isThreatened(board, players[current_player].findKing(board)))
+					if (board.isThreatened(players[current_player].findKing(board), players[current_player].camp))
 					{
 						viewer.showcheck();
 						cout << "checkcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheck\n";
@@ -155,7 +149,7 @@ bool GameManager::isGameOver(Player player)
 {
 	Board temp = board;
 
-	if (!player.isThreatened(board, player.findKing(board)))
+	if (!board.isThreatened( player.findKing(board), player.camp))
 		return 0;
 	for (int j = 0; j < BOARDLEN; j++)
 	{
@@ -167,7 +161,7 @@ bool GameManager::isGameOver(Player player)
 				{
 					if (player.OnMove(temp, temp.board[j][k]._position, element))
 					{
-						if (!player.isThreatened(temp, player.findKing(board)))
+						if (!temp.isThreatened( player.findKing(board), player.camp))
 							return 0;
 						temp = board;
 					}
