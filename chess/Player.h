@@ -44,7 +44,7 @@ bool Player::OnMove(Board& board, Position& start, Position& end)
 	piece backup_destination = board.board[end.x][end.y];
 	piece& destination = board.board[end.x][end.y];
 	
-	if (camp == destination.camp || chosen.camp != camp)//end cant be alley, start cant be enemy
+	if (camp == destination.camp || chosen.camp != camp || (start.x == end.x && start.y == end.y))//end cant be alley, start cant be enemy
 		return 0;
 	for (auto element : chosen.availablemove)
 	{

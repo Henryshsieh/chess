@@ -107,19 +107,27 @@ GameManager::GameManager()
 bool GameManager::isGameOver(Player player)
 {
 	Board temp = board;
+
 	if (!player.isThreatened(board, player.findKing(board)))
 		return 0;
 	for (int j = 0; j < BOARDLEN; j++)
 	{
 		for (int k = 0; k < BOARDLEN; k++)
 		{
-			for (auto element : board.board[j][k].availablemove)
+			if (board.board[j][k].camp == player.camp)
 			{
-				if (players[current_player].OnMove(temp, temp.board[j][k]._position, element))
+				for (auto element : board.board[j][k].availablemove)
 				{
-					if (!player.isThreatened(temp, player.findKing(board)))
-						return 0;
-					temp = board;
+					if (players[current_player].OnMove(temp, temp.board[j][k]._position, element))
+					{
+						cout << endl;
+						temp.print();
+						cout << endl;
+
+						if (!player.isThreatened(temp, player.findKing(board)))
+							return 0;
+						temp = board;
+					}
 				}
 			}
 		}

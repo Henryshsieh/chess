@@ -199,6 +199,13 @@ void Viewer::movePicture(Board& board, Position p, Player player)
 				if (i == element.x && j == element.y && board.board[i][j].camp != player.camp && board.board[i][j].pieceId != null)
 				{
 					target[index].setPosition(j * 112.5f, i * 112.5f);
+					if (board.board[p.x][p.y].camp != player.camp)
+						target[index].setColor(sf::Color::Red);
+					else
+					{
+						target[index].setColor(sf::Color::Black);
+					}
+					target[index];
 					used[index++] = true;
 					cout << endl << i << j << endl;
 				}
@@ -208,6 +215,12 @@ void Viewer::movePicture(Board& board, Position p, Player player)
 
 				if (i == element.x && j == element.y)
 				{
+					if (board.board[p.x][p.y].camp != player.camp)
+						target[index].setColor(sf::Color::Red);
+					else
+					{
+						target[index].setColor(sf::Color::Blue);
+					}
 					target[index].setPosition(j * 112.5f, i * 112.5f);
 					used[index++] = true;
 					cout << endl << i << j << endl;
