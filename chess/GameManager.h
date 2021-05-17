@@ -109,7 +109,8 @@ void GameManager::ProcessInput()
 			exit(0);
 		}
 	}
-	if (t == 50000)
+	t++;
+	if (t == 500)
 	{
 		cout << " player " << current_player << " lose\n";
 
