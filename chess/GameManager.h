@@ -17,6 +17,7 @@ public:
 	Position end;
 private:
 	int check;
+	int t;
 	Player players[2];
 	int current_player;
 	Board board;
@@ -107,6 +108,9 @@ void GameManager::ProcessInput()
 			exit(0);
 		}
 	}
+	cout << t++ << endl;
+	if (t == 50000)
+		exit(0);
 }
 
 
@@ -130,7 +134,7 @@ int GameManager::run()
 GameManager::GameManager()
 {
 	check = 0;
-
+	t = 0;
 	count = 0;
 	board = Board();
 	//viewer = Viewer();
@@ -162,6 +166,7 @@ bool GameManager::isGameOver(Player player)
 			{
 				for (auto element : board.board[j][k].availablemove)
 				{
+					cout << "               " << j << k << " " << element.x << element.y << endl;
 					if (player.OnMove(temp, temp.board[j][k]._position, element))
 					{
 						return 0;
