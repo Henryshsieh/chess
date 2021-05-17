@@ -53,6 +53,7 @@ void GameManager::ProcessInput()
 				end = p;
 				if (players[current_player].OnMove(board, start, end))
 				{
+					cout << "from" << start.x << " " << start.y << " to" << end.x << " " << end.y << endl;
 					current_player ^= 1;
 					if (players[current_player].isThreatened(board, players[current_player].findKing(board)))
 					{
@@ -66,7 +67,6 @@ void GameManager::ProcessInput()
 				}
 				viewer.movePicture(board);
 			}
-			cout<< p.x << " " << p.y << endl;
 			check = check ^ 1;
 
 		}

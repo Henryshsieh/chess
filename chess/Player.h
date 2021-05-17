@@ -62,6 +62,7 @@ bool Player::OnMove(Board& board, Position& start, Position& end)
 				chosen = backup_chosen;
 				return 0;
 			}
+			return 1;
 		}
 	}
 	for (auto element : chosen.attack)
@@ -80,10 +81,12 @@ bool Player::OnMove(Board& board, Position& start, Position& end)
 				chosen = backup_chosen;
 				return 0;
 			}
+			return 1;
+
 		}
 	}
 	board.print();
-	return 1;
+	return 0;
 }
 
 void Player::setAvailablePath(Board& board)
@@ -96,10 +99,11 @@ void Player::setAvailablePath(Board& board)
 		{
 			if (1)
 			{
+				board.board[i][j].availablemove = vector<Position>();
 				if (board.board[i][j].pieceId == ROOK)
 				{
 					//rook
-					board.board[i][j].availablemove = vector<Position>();
+					
 					Position p = board.board[i][j]._position;
 					Position up = p;
 					Position down = p;
@@ -166,7 +170,7 @@ void Player::setAvailablePath(Board& board)
 				}
 				else if (board.board[i][j].pieceId == PAWN)
 				{
-					board.board[i][j].availablemove = vector<Position>();
+					
 					Position forward_position = board.board[i][j]._position;
 					forward_position.x = (board.board[i][j].camp == 0) ? forward_position.x - 1 : forward_position.x + 1;//determine where is front
 
@@ -207,7 +211,7 @@ void Player::setAvailablePath(Board& board)
 				}
 				else if (board.board[i][j].pieceId == BISHOP)
 				{
-					board.board[i][j].availablemove = vector<Position>();
+					
 					Position p = board.board[i][j]._position;
 					Position left_up = p;
 					Position left_down = p;
@@ -280,7 +284,7 @@ void Player::setAvailablePath(Board& board)
 				}
 				else if (board.board[i][j].pieceId == KNIGHT)
 				{
-					board.board[i][j].availablemove = vector<Position>();
+					
 					Position p = board.board[i][j]._position;
 					Position p1;
 					Position p2;
@@ -317,7 +321,7 @@ void Player::setAvailablePath(Board& board)
 				}
 				else if (board.board[i][j].pieceId == KING)
 				{
-					board.board[i][j].availablemove = vector<Position>();
+					
 					Position p = board.board[i][j]._position;
 					Position p1;
 					Position p2;
@@ -354,7 +358,7 @@ void Player::setAvailablePath(Board& board)
 				}
 				else if (board.board[i][j].pieceId == QUEEN)
 				{
-					board.board[i][j].availablemove = vector<Position>();
+					
 					Position p = board.board[i][j]._position;
 					Position up = p;
 					Position down = p;
