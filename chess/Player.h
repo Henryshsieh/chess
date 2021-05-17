@@ -12,15 +12,13 @@ class Player
 {
 public:
 	Player();
-	void OnPromote(Board& board);
 	Player(int, Board&);
 	bool OnMove(Board&, Position&, Position&);
-		// queen, rook, bishop or knight
+	void OnPromote(Board& board);
 	bool islegalPosition(Position);
 	Position findKing(Board&);
 	int camp;
 };
-
 
 Player::Player()
 {
@@ -101,11 +99,10 @@ bool Player::OnMove(Board& board, Position& start, Position& end)
 
 	return 0;
 }
-
 void Player::OnPromote(Board& board)
 {
 	int side = (camp == 0) ? 0 : 7;
-	for (int i = 0 ; i < BOARDLEN ;i++)
+	for (int i = 0; i < BOARDLEN; i++)
 	{
 		if (board.board[side][i].pieceId == 6) {
 			char promoteType;
