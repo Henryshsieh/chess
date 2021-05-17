@@ -60,6 +60,7 @@ void GameManager::ProcessInput()
 	{
 		if (event.mouseButton.button == sf::Mouse::Left)
 		{
+			t = 0;
 			p.y = event.mouseButton.x / 112.5f;
 			p.x = event.mouseButton.y / 112.5f;
 			if (!check)
