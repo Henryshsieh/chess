@@ -110,7 +110,8 @@ void GameManager::ProcessInput()
 		}
 	}
 	t++;
-	if (t == 500)
+	cout <<"left " <<5000/100 - (double)t / 100  << "seconds"<< endl;
+	if (t == 5000)
 	{
 		cout << " player " << current_player << " lose\n";
 
