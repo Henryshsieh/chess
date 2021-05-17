@@ -55,6 +55,7 @@ bool Player::OnMove(Board& board, Position& start, Position& end)
 			destination.moved = true;
 			chosen = piece();
 			setAvailablePath(board);
+			setAvailablePath(board);
 			if (isThreatened(board, findKing(board)))
 			{
 				cout << "protect the king!\n";
@@ -73,6 +74,7 @@ bool Player::OnMove(Board& board, Position& start, Position& end)
 			destination._position = end;
 			destination.moved = true;
 			chosen = piece();
+			setAvailablePath(board);
 			setAvailablePath(board);
 			if (isThreatened(board, findKing(board)))
 			{

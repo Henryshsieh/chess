@@ -11,7 +11,8 @@ public:
 	int run();
 	bool isGameOver(Player);
 	bool isTie();
-	void ProcessInput();
+	bool ProcessInput();
+	void menu();
 	
 	Position start;
 	Position end;
@@ -41,7 +42,7 @@ bool GameManager::isTie()
 	return 1;
 }
 
-void GameManager::ProcessInput()
+bool GameManager::ProcessInput()
 {
 	sf::Event event;
 	Position p;
@@ -61,12 +62,18 @@ void GameManager::ProcessInput()
 				cout <<"a";
 
 			}
+
 			p.y = event.mouseButton.x / 112.5f;
 			p.x = event.mouseButton.y / 112.5f;
 			if (!check)
 			{
 				
 				start = p;
+				if (start.x == 0 && start.y == 4)
+				{
+					cout << "a";
+
+				}
 				board.print(start);
 				viewer.movePicture(board, start, players[current_player]);
 			}
@@ -133,6 +140,10 @@ GameManager::GameManager()
 	
 }
 
+void GameManager::menu()
+{
+
+}
 
 
 
