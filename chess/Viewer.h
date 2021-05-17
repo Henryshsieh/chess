@@ -49,9 +49,10 @@ private:
 };
 void Viewer::showcheck()
 {
-	check.setPosition(400, 400);
+	check.setPosition(0, 400);
 	for (int i = 0 ; i < 8000;i++)
 	{
+		check.move(0.1, 0);
 		window.draw(check);
 		window.display();
 		//Display();
@@ -74,7 +75,7 @@ Viewer::Viewer()
 	{
 		std::cout << "Error loading file" << std::endl;
 	}
-	if (!whiterook_texture.loadFromFile("check.png"))
+	if (!checktexture.loadFromFile("check.png"))
 		std::cout << "Error loading file" << std::endl;
 	if (!whiterook_texture.loadFromFile("whiterook.png"))
 		std::cout << "Error loading file" << std::endl;
@@ -125,7 +126,7 @@ Viewer::Viewer()
 	white_king = sf::Sprite(whiteking_texture);
 
 	black_king = sf::Sprite(blackking_texture);
-
+	
 	white_queen = sf::Sprite(whitequeen_texture);
 
 	black_queen = sf::Sprite(blackqueen_texture);
@@ -145,8 +146,9 @@ Viewer::Viewer()
 
 void Viewer::Display()
 {
-
 	window.draw(sprite);
+	
+	
 	window.draw(white_rook[0]);
 	window.draw(white_rook[1]);
 	window.draw(black_rook[0]);

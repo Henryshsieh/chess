@@ -94,7 +94,7 @@ void Player::setAvailablePath(Board& board)
 	{
 		for (int j = 0; j < BOARDLEN; j++)
 		{
-			if (board.board[i][j].camp == camp)
+			if (1)
 			{
 				if (board.board[i][j].pieceId == ROOK)
 				{
@@ -168,7 +168,7 @@ void Player::setAvailablePath(Board& board)
 				{
 					board.board[i][j].availablemove = vector<Position>();
 					Position forward_position = board.board[i][j]._position;
-					forward_position.x = (camp == 0) ? forward_position.x - 1 : forward_position.x + 1;//determine where is front
+					forward_position.x = (board.board[i][j].camp == 0) ? forward_position.x - 1 : forward_position.x + 1;//determine where is front
 
 					Position left = forward_position;
 					Position right = forward_position;
@@ -196,7 +196,7 @@ void Player::setAvailablePath(Board& board)
 
 					//pawn has not moved
 					Position two_step = forward_position;
-					two_step.x = (camp == 0) ? forward_position.x - 1 : forward_position.x + 1;
+					two_step.x = (board.board[i][j].camp == 0) ? forward_position.x - 1 : forward_position.x + 1;
 					if (!board.board[i][j].moved)
 					{
 						if (islegalPosition(two_step)

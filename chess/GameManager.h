@@ -34,10 +34,7 @@ void GameManager::ProcessInput()
 		if (event.type == sf::Event::Closed)
 			viewer.window.close();
 	}
-	if (isGameOver(players[current_player]))
-	{
-		exit(0);
-	}
+	
 	if (event.type == sf::Event::MouseButtonReleased)
 	{
 		if (event.mouseButton.button == sf::Mouse::Left)
@@ -57,6 +54,15 @@ void GameManager::ProcessInput()
 				if (players[current_player].OnMove(board, start, end))
 				{
 					current_player ^= 1;
+					if (players[current_player].isThreatened(board, players[current_player].findKing(board)))
+					{
+						viewer.showcheck();
+						cout << "checkcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheck\n";
+					}
+					if (isGameOver(players[current_player]))
+					{
+						exit(0);
+					}
 				}
 				viewer.movePicture(board);
 			}
@@ -64,10 +70,7 @@ void GameManager::ProcessInput()
 			check = check ^ 1;
 
 		}
-		if (players[current_player].isThreatened(board, players[current_player].findKing(board)))
-		{
-			cout << "checkcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheck\n";
-		}
+		
 	}
 	
 }
@@ -118,12 +121,8 @@ bool GameManager::isGameOver(Player player)
 			{
 				for (auto element : board.board[j][k].availablemove)
 				{
-					if (players[current_player].OnMove(temp, temp.board[j][k]._position, element))
+					if (player.OnMove(temp, temp.board[j][k]._position, element))
 					{
-						cout << endl;
-						temp.print();
-						cout << endl;
-
 						if (!player.isThreatened(temp, player.findKing(board)))
 							return 0;
 						temp = board;
