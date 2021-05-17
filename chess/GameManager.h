@@ -67,12 +67,27 @@ void GameManager::ProcessInput()
 			{
 				count++;
 				start = p;
-				if(count == 1)
+				if (count == 1)
+				{
 					if (board.board[start.x][start.y].pieceId != null)
 					{
-						current_player = board.board[start.x][start.y].camp;
+						if (board.board[start.x][start.y].camp == 1)
+						{
+							for (int i = 0; i < BOARDLEN; i++)
+							{
+								for (int j = 0; j < BOARDLEN; j++)
+								{
+									if (board.board[i][j].pieceId != null)
+									{
+										board.board[i][j].camp ^= 1;
+									}
+								}
+							}
+						}
 
 					}
+				}
+					
 				board.print(start);
 				viewer.movePicture(board, start, players[current_player]);
 			}

@@ -12,6 +12,8 @@ protected:
 private:
 	Board board;
 	sf::Texture texture;
+	sf::Texture startt;
+	sf::Texture exitt;
 	sf::Texture checktexture;
 	sf::Texture transparent;
 	sf::Texture target_texture;
