@@ -30,7 +30,7 @@ class piece
 {
 public:
 	piece() :pieceId(null), camp(-999), pieceIndex(0), moved(0) {}
-	piece(int id, int inx, int c, int x, int y) :pieceId(id), pieceIndex(inx), camp(c), moved(0) 
+	piece(int id, int inx, int c, int x, int y) :pieceId(id), pieceIndex(inx), camp(c), moved(0) ,promotePiece(0)
 	{
 		_position.x = x;
 		_position.y = y;
@@ -45,6 +45,7 @@ public:
 	}
 	int pieceId; // types of chess pieces
 	int pieceIndex; // to distinguish pieces of same type
+	int promotePiece;
 	int camp; // black side or white side; represented by 1 and 0
 	bool moved = 0;
 	Position _position;

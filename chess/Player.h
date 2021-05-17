@@ -18,6 +18,7 @@ public:
 		// queen, rook, bishop or knight
 	bool islegalPosition(Position);
 	Position findKing(Board&);
+	Position findRook(Board& board, int c);
 	bool isThreatened(Board&, Position);
 	void setAvailablePath(Board&);
 	int camp;
@@ -105,20 +106,25 @@ void Player::OnPromote(Board& board)
 				if (promoteType == 'q' || promoteType == 'Q') {
 					board.board[side][i].pieceId = QUEEN;
 					board.board[side][i].camp = camp;
+					board.board[side][i].promotePiece = 1;
 					break;
 				}
 				else if (promoteType == 'r' || promoteType == 'R') {
 					board.board[side][i].pieceId = ROOK;
 					board.board[side][i].camp = camp;
+					board.board[side][i].promotePiece = 1;
+
 					break;
 				}
 				else if (promoteType == 'b' || promoteType == 'B') {
 					board.board[side][i].pieceId = BISHOP;
+					board.board[side][i].promotePiece = 1;
 					board.board[side][i].camp = camp;
 					break;
 				}
 				else if (promoteType == 'k' || promoteType == 'K') {
 					board.board[side][i].pieceId = KNIGHT;
+					board.board[side][i].promotePiece = 1;
 					board.board[side][i].camp = camp;
 					break;
 				}
@@ -377,6 +383,30 @@ void Player::setAvailablePath(Board& board)
 					//xxo
 					//xxo <-rotate
 					//xxx
+					Position rook = findRook(board, board.board[i][j].camp);
+					bool moveHorizontal = 0;
+					bool moveVertical = 0;
+					if (board.board[rook.x][rook.y].availablemove.empty())
+					{
+						moveHorizontal = 1;
+						moveVertical = 1;
+					}
+					for (auto element : board.board[rook.x][rook.y].availablemove)
+					{
+						if (element.x - p.x == 0 && !moveHorizontal)
+						{
+							if (isThreatened(board, element))
+								moveHorizontal = 1;
+						}
+						else if (element.y == p.y && !moveVertical)
+						{
+							if (isThreatened(board, element))
+								moveHorizontal = 1;
+						}
+					}
+					if (!moveHorizontal || !moveVertical)
+						board.board[p.x][p.y].availablemove.push_back(rook);
+
 					for (int K = 0; K < 4; K++)
 					{
 						int tmp = p1.x;
@@ -592,6 +622,20 @@ Position Player::findKing(Board& board)
 		for (int j = 0; j < BOARDLEN; j++)
 		{
 			if (board.board[i][j].pieceId == KING && board.board[i][j].camp == camp)
+				king = board.board[i][j]._position;
+		}
+	}
+	return king;
+}
+
+Position Player::findRook(Board& board, int c)
+{
+	Position king;
+	for (int i = 0; i < BOARDLEN; i++)
+	{
+		for (int j = 0; j < BOARDLEN; j++)
+		{
+			if (board.board[i][j].pieceId == ROOK && board.board[i][j].camp == c)
 				king = board.board[i][j]._position;
 		}
 	}

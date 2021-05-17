@@ -11,8 +11,7 @@ public:
 	int run();
 	bool isGameOver(Player);
 	bool isTie();
-	bool ProcessInput();
-	void menu();
+	void ProcessInput();
 	
 	Position start;
 	Position end;
@@ -42,14 +41,18 @@ bool GameManager::isTie()
 	return 1;
 }
 
-bool GameManager::ProcessInput()
+void GameManager::ProcessInput()
 {
 	sf::Event event;
 	Position p;
 	while (viewer.window.pollEvent(event))
 	{
 		if (event.type == sf::Event::Closed)
+		{
 			viewer.window.close();
+			exit(0);
+
+		}
 	}
 	
 	if (event.type == sf::Event::MouseButtonReleased)
@@ -62,18 +65,15 @@ bool GameManager::ProcessInput()
 				cout <<"a";
 
 			}
-
 			p.y = event.mouseButton.x / 112.5f;
 			p.x = event.mouseButton.y / 112.5f;
 			if (!check)
 			{
 				
 				start = p;
-				if (start.x == 0 && start.y == 4)
-				{
-					cout << "a";
-
-				}
+				if(count == 1)
+					if (board.board[start.x][start.y].pieceId != null)
+						current_player = board.board[start.x][start.y].camp;
 				board.print(start);
 				viewer.movePicture(board, start, players[current_player]);
 			}
@@ -102,11 +102,14 @@ bool GameManager::ProcessInput()
 				viewer.movePicture(board);
 			}
 			check = check ^ 1;
-
 		}
-		
+
+		if (event.mouseButton.button == sf::Mouse::Right)
+		{
+			cout << " player "<< current_player << " surrounded\n";
+			exit(0);
+		}
 	}
-	
 }
 
 
@@ -114,10 +117,15 @@ int GameManager::run()
 {
 		
 	bool check = 0;
-	while (viewer.window.isOpen()) {
+	while (1)
+	{
+		while (viewer.window.isOpen()) {
 
-		ProcessInput();
-		viewer.Display();
+			ProcessInput();
+			viewer.Display();
+		}
+
+
 	}
 	return 0;
 }
@@ -140,10 +148,6 @@ GameManager::GameManager()
 	
 }
 
-void GameManager::menu()
-{
-
-}
 
 
 
