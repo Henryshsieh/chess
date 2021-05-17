@@ -79,6 +79,17 @@ public:
 	bool isThreatened(Position king, int);
 	bool islegalPosition(Position p);
 	void print(Position);
+	Board& operator = (Board rhs)
+	{
+		for (int i = 0 ; i < BOARDLEN ; i++)
+		{
+			for (int j = 0; j < BOARDLEN; j++)
+			{
+				board[i][j] = rhs.board[i][j];
+			}
+		}
+		return *this;
+	}
 	Board();
 protected:
 private:

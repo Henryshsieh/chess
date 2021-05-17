@@ -63,11 +63,14 @@ void GameManager::ProcessInput()
 			p.x = event.mouseButton.y / 112.5f;
 			if (!check)
 			{
-				
+				count++;
 				start = p;
 				if(count == 1)
 					if (board.board[start.x][start.y].pieceId != null)
+					{
 						current_player = board.board[start.x][start.y].camp;
+
+					}
 				board.print(start);
 				viewer.movePicture(board, start, players[current_player]);
 			}
@@ -161,8 +164,7 @@ bool GameManager::isGameOver(Player player)
 				{
 					if (player.OnMove(temp, temp.board[j][k]._position, element))
 					{
-						if (!temp.isThreatened( player.findKing(board), player.camp))
-							return 0;
+						temp.print();
 						temp = board;
 					}
 				}
