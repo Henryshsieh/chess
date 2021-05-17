@@ -9,7 +9,7 @@ class GameManager
 public:
 	GameManager();
 	int run();
-	bool isGameOver();
+	bool isGameOver(Player);
 	void ProcessInput();
 	
 	Position start;
@@ -34,7 +34,10 @@ void GameManager::ProcessInput()
 		if (event.type == sf::Event::Closed)
 			viewer.window.close();
 	}
-
+	if (isGameOver(players[current_player]))
+	{
+		exit(0);
+	}
 	if (event.type == sf::Event::MouseButtonReleased)
 	{
 		if (event.mouseButton.button == sf::Mouse::Left)
@@ -101,29 +104,27 @@ GameManager::GameManager()
 
 
 
-bool GameManager::isGameOver()
+bool GameManager::isGameOver(Player player)
 {
 	Board temp = board;
-	for (int i = 0; i < 2; i++)
+	if (!player.isThreatened(board, player.findKing(board)))
+		return 0;
+	for (int j = 0; j < BOARDLEN; j++)
 	{
-		if (!players[i].isThreatened(board, players[i].findKing(board)))
-			break;
-		for (int j = 0; j < BOARDLEN; j++)
+		for (int k = 0; k < BOARDLEN; k++)
 		{
-			for (int k = 0; k < BOARDLEN; k++)
+			for (auto element : board.board[j][k].availablemove)
 			{
-				for (auto element : board.board[j][k].availablemove)
+				if (players[current_player].OnMove(temp, temp.board[j][k]._position, element))
 				{
-					if (players[current_player].OnMove(temp, temp.board[j][k]._position, element))
-					{
-						if (!players[i].isThreatened(temp, players[i].findKing(board)))
-							return 0;
-						temp = board;
-					}
+					if (!player.isThreatened(temp, player.findKing(board)))
+						return 0;
+					temp = board;
 				}
 			}
 		}
 	}
+	cout << "player " << player.camp << " lose";
 	return 1;
 
 }
