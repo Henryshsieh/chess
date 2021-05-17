@@ -49,7 +49,7 @@ private:
 	sf::Sprite black_queen;
 };
 
-void Viewer::showcheck()
+void Viewer::showcheck() // show "check" animation
 {
 	check.setPosition(0, 400);
 	for (int i = 0; i < 8000; i++)
@@ -61,7 +61,7 @@ void Viewer::showcheck()
 	}
 }
 
-Viewer::Viewer()
+Viewer::Viewer() // constructor
 {
 	window.create(sf::VideoMode(900, 900), "SFML Window");
 	if (!texture.loadFromFile("board.png"))
@@ -147,10 +147,9 @@ Viewer::Viewer()
 	movePicture(board);
 }
 
-void Viewer::Display()
+void Viewer::Display() // display chess pieces on canvas
 {
 	window.draw(sprite);
-
 
 	window.draw(white_rook[0]);
 	window.draw(white_rook[1]);
@@ -180,7 +179,7 @@ void Viewer::Display()
 	window.display();
 }
 
-void Viewer::movePicture(Board& board, Position p, Player player)
+void Viewer::movePicture(Board& board, Position p, Player player) // move pieces when they're moved
 {
 	Board temp = board;
 	int index = 0;
@@ -282,7 +281,7 @@ void Viewer::movePicture(Board& board, Position p, Player player)
 
 }
 
-void Viewer::movePicture(Board& board)
+void Viewer::movePicture(Board& board) // overload function: move pieces when they're moved
 {
 	for (int i = 0; i < 64; i++)
 	{

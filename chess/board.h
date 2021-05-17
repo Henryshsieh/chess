@@ -136,7 +136,7 @@ bool Board::islegalPosition(Position p) // check if the chosen position is avail
 	return 0;
 }
 
-void Board::print() // print the board
+void Board::print() // print the board onto console
 {
 	for (int i = 0; i < BOARDLEN; i++)
 	{
@@ -148,7 +148,7 @@ void Board::print() // print the board
 	}
 }
 
-void Board::print(Position p) // print the board
+void Board::print(Position p) // print the board onto console
 {
 	piece temp[BOARDLEN][BOARDLEN];
 	vector<Position> vec;
