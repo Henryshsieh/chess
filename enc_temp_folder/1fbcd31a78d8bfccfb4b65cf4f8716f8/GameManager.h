@@ -10,7 +10,6 @@ public:
 	GameManager();
 	int run();
 	bool isGameOver(Player);
-	bool isTie();
 	void ProcessInput();
 	
 	Position start;
@@ -26,20 +25,6 @@ private:
 
 
 };
-
-bool GameManager::isTie()
-{
-	for (int i = 0 ; i < BOARDLEN ; i ++)
-	{
-		for (int j = 0 ; j < BOARDLEN ; j++)
-		{
-			if (board.board[i][j].pieceId != KING && board.board[i][j].pieceId != null)
-				return 0;
-		}
-	}
-	cout << "tie\n";
-	return 1;
-}
 
 void GameManager::ProcessInput()
 {
@@ -84,10 +69,6 @@ void GameManager::ProcessInput()
 						cout << "checkcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheckcheck\n";
 					}
 					if (isGameOver(players[current_player]))
-					{
-						exit(0);
-					}
-					if (isTie())
 					{
 						exit(0);
 					}

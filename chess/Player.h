@@ -12,9 +12,9 @@ class Player
 {
 public:
 	Player();
+	void OnPromote(Board& board);
 	Player(int, Board&);
 	bool OnMove(Board&, Position&, Position&);
-	void OnPromote(Board& const board, Position& const pawnPos/*, PieceType& outType*/);
 		// queen, rook, bishop or knight
 	bool islegalPosition(Position);
 	Position findKing(Board&);
@@ -90,6 +90,46 @@ bool Player::OnMove(Board& board, Position& start, Position& end)
 	return 0;
 }
 
+void Player::OnPromote(Board& board)
+{
+	int side = (camp == 0) ? 0 : 7;
+	for (int i = 0 ; i < BOARDLEN ;i++)
+	{
+		if (board.board[side][i].pieceId == 6) {
+			char promoteType;
+			cout << "Select promotion type('q'ueen, 'r'ook, 'b'ishop or 'k'night):";
+			cin >> promoteType;
+			while (true) {
+				if (promoteType == 'q' || promoteType == 'Q') {
+					board.board[side][i].pieceId = QUEEN;
+					board.board[side][i].camp = camp;
+					break;
+				}
+				else if (promoteType == 'r' || promoteType == 'R') {
+					board.board[side][i].pieceId = ROOK;
+					board.board[side][i].camp = camp;
+					break;
+				}
+				else if (promoteType == 'b' || promoteType == 'B') {
+					board.board[side][i].pieceId = BISHOP;
+					board.board[side][i].camp = camp;
+					break;
+				}
+				else if (promoteType == 'k' || promoteType == 'K') {
+					board.board[side][i].pieceId = KNIGHT;
+					board.board[side][i].camp = camp;
+					break;
+				}
+				else {
+					cout << "Choose again:";
+					cin >> promoteType;
+				}
+			}
+			board.print(board.board[side][i]._position);
+		}
+	}
+	
+}
 void Player::setAvailablePath(Board& board)
 {
 	//rook
